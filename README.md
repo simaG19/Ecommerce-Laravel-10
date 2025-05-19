@@ -2,8 +2,8 @@
 
 ### 🔹 **Step 1: Clone the Repository**
 ```sh
-git clone https://github.com/Prajwal100/Complete-Ecommerce-in-laravel-10.git
-cd Complete-Ecommerce-in-laravel-10
+git clone https://github.com/simaG19/Ecommerce-Laravel-10.git
+cd Ecommerce-Laravel-10.git
 ```
 
 ### 🔹 **Step 2: Install Dependencies**
