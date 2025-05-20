@@ -1,19 +1,23 @@
 pipeline {
-    agent any
+  agent any
 
-    stages {
-        stage('Build') {
-            steps {
-                git branch: 'main', url: 'https://github.com/your-username/your-laravel-repo.git'
-                sh 'composer install'
-                sh 'cp .env.example .env'
-                sh 'php artisan key:generate'
-            }
-        }
-        stage('Test') {
-            steps {
-                sh './vendor/bin/phpunit'
-            }
-        }
+  stages {
+    stage('Build') {
+      steps {
+        // use the PAT credential to authenticate the git clone
+        git branch: 'main',
+            url: 'https://github.com/simaG19/Ecommerce-Laravel-10.git',
+            credentialsId: 'github-pat'
+
+        sh 'composer install'
+        sh 'cp .env.example .env'
+        sh 'php artisan key:generate'
+      }
     }
+    stage('Test') {
+      steps {
+        sh './vendor/bin/phpunit'
+      }
+    }
+  }
 }
