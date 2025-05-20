@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                git 'https://github.com/simaG19/Ecommerce-Laravel-10.git'
+                git branch: 'main', url: 'https://github.com/your-username/your-laravel-repo.git'
                 sh 'composer install'
                 sh 'cp .env.example .env'
                 sh 'php artisan key:generate'
