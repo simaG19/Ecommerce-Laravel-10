@@ -10,20 +10,24 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // explicitly checkout the `main` branch
+                // explicitly check out main
                 git branch: 'main',
-                    url: 'https://github.com/simaG19/Ecommerce-Laravel-10.git'
+                    url:    'https://github.com/simaG19/Ecommerce-Laravel-10.git'
             }
         }
 
-        stage('Prepare') {
+        stage('PHP / Composer') {
+            // use the official Composer image (bundles PHP & Composer)
+            agent {
+                docker {
+                    image 'composer:2.5-php8.1'
+                    // persist composer cache across builds
+                    args  '-v $HOME/.composer/cache:/root/.composer/cache'
+                }
+            }
             steps {
                 sh '''
-                  # ensure correct PHP & Composer are on PATH
-                  php -v
                   composer install --no-interaction --prefer-dist --optimize-autoloader
-
-                  # set up environment
                   cp .env.example .env
                   php artisan key:generate
                 '''
@@ -31,18 +35,29 @@ pipeline {
         }
 
         stage('Migrate & Test') {
+            agent {
+                docker {
+                    image 'composer:2.5-php8.1'
+                    args  '-v $HOME/.composer/cache:/root/.composer/cache'
+                }
+            }
             steps {
                 sh '''
-                  # migrate in-memory DB and run your test suite
-                  php artisan migrate
+                  php artisan migrate --force
                   php artisan test
                 '''
             }
         }
 
-        stage('Frontend Build (if any)') {
+        stage('Frontend Build') {
             when {
                 expression { fileExists('package.json') }
+            }
+            agent {
+                docker {
+                    image 'node:16'
+                    args  '-v $HOME/.npm:/root/.npm'
+                }
             }
             steps {
                 sh '''
@@ -55,10 +70,10 @@ pipeline {
 
     post {
         success {
-            echo '👍 Build succeeded!'
+            echo '✅ Build succeeded!'
         }
         failure {
-            echo '🚨 Build failed!'
+            echo '❌ Build failed!'
         }
         always {
             echo '🏁 Pipeline complete.'
