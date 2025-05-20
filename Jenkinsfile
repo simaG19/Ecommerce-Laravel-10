@@ -2,11 +2,11 @@ pipeline {
     agent any
 
     // If you’ve configured Jenkins Global Tools for PHP, Composer, NodeJS, uncomment and adjust:
-    tools {
-        php      'PHP 8.1'      // name in Jenkins → points to PHP 8.1 install
-        composer 'Composer 2.5' // name in Jenkins → points to Composer
-        nodejs   'NodeJS 16'    // name in Jenkins → points to Node.js & npm
-    }
+    // tools {
+    //     php      'PHP 8.1'      // name in Jenkins → points to PHP 8.1 install
+    //     composer 'Composer 2.5' // name in Jenkins → points to Composer
+    //     nodejs   'NodeJS 16'    // name in Jenkins → points to Node.js & npm
+    // }
 
     environment {
         APP_ENV       = 'testing'
@@ -27,8 +27,7 @@ pipeline {
             steps {
                 sh '''
                   # Install Composer manually
-                  curl -sS https://getcomposer.org/installer | php
-                  php composer.phar install --no-interaction --prefer-dist --optimize-autoloader
+                  composer install
           
                   cp .env.example .env
                   php artisan key:generate
