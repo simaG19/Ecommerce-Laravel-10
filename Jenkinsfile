@@ -1,6 +1,13 @@
 pipeline {
     agent any
 
+    // If you’ve configured Jenkins Global Tools for PHP, Composer, NodeJS, uncomment and adjust:
+    // tools {
+    //     php      'PHP 8.1'      // name in Jenkins → points to PHP 8.1 install
+    //     composer 'Composer 2.5' // name in Jenkins → points to Composer
+    //     nodejs   'NodeJS 16'    // name in Jenkins → points to Node.js & npm
+    // }
+
     environment {
         APP_ENV       = 'testing'
         DB_CONNECTION = 'sqlite'
@@ -8,59 +15,52 @@ pipeline {
     }
 
     stages {
-        stage('Checkout') {
+        stage('Checkout code') {
             steps {
-                // explicitly check out main
+                // explicit main-branch checkout
                 git branch: 'main',
-                    url:    'https://github.com/simaG19/Ecommerce-Laravel-10.git'
+                    url:   'https://github.com/simaG19/Ecommerce-Laravel-10.git'
             }
         }
 
-        stage('PHP / Composer') {
-            // use the official Composer image (bundles PHP & Composer)
-            agent {
-                docker {
-                    image 'composer:2.5-php8.1'
-                    // persist composer cache across builds
-                    args  '-v $HOME/.composer/cache:/root/.composer/cache'
-                }
-            }
+        stage('Install PHP dependencies') {
             steps {
                 sh '''
+                  # show versions to confirm PATH
+                  php -v
+                  composer --version
+
+                  # install backend deps
                   composer install --no-interaction --prefer-dist --optimize-autoloader
+
+                  # setup Laravel env
                   cp .env.example .env
                   php artisan key:generate
                 '''
             }
         }
 
-        stage('Migrate & Test') {
-            agent {
-                docker {
-                    image 'composer:2.5-php8.1'
-                    args  '-v $HOME/.composer/cache:/root/.composer/cache'
-                }
-            }
+        stage('Run migrations & tests') {
             steps {
                 sh '''
+                  # migrate and run your PHPUnit / Pest test suite
                   php artisan migrate --force
                   php artisan test
                 '''
             }
         }
 
-        stage('Frontend Build') {
+        stage('Build frontend assets') {
             when {
                 expression { fileExists('package.json') }
             }
-            agent {
-                docker {
-                    image 'node:16'
-                    args  '-v $HOME/.npm:/root/.npm'
-                }
-            }
             steps {
                 sh '''
+                  # show Node & npm
+                  node --version
+                  npm --version
+
+                  # install & build
                   npm ci
                   npm run build
                 '''
@@ -70,13 +70,13 @@ pipeline {
 
     post {
         success {
-            echo '✅ Build succeeded!'
+            echo '✅ All done—build and tests passed!'
         }
         failure {
-            echo '❌ Build failed!'
+            echo '❌ Something failed. Check the logs above.'
         }
         always {
-            echo '🏁 Pipeline complete.'
+            echo '🏁 Pipeline finished.'
         }
     }
 }
