@@ -26,14 +26,8 @@ pipeline {
         stage('Install PHP dependencies') {
             steps {
                 sh '''
-                  # show versions to confirm PATH
-                  php -v
-                  composer --version
-
-                  # install backend deps
                   composer install --no-interaction --prefer-dist --optimize-autoloader
 
-                  # setup Laravel env
                   cp .env.example .env
                   php artisan key:generate
                 '''
