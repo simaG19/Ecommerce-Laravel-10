@@ -2,52 +2,66 @@ pipeline {
     agent any
 
     environment {
-        APP_ENV = 'testing'
+        APP_ENV       = 'testing'
         DB_CONNECTION = 'sqlite'
-        DB_DATABASE = ':memory:'
+        DB_DATABASE   = ':memory:'
     }
 
     stages {
-        stage('Clone Repo') {
+        stage('Checkout') {
             steps {
-                git 'https://github.com/simaG19/Ecommerce-Laravel-10.git'
+                // explicitly checkout the `main` branch
+                git branch: 'main',
+                    url: 'https://github.com/simaG19/Ecommerce-Laravel-10.git'
             }
         }
 
-        stage('Set Up PHP & Composer') {
+        stage('Prepare') {
             steps {
                 sh '''
-                    php -v
-                    composer install --no-interaction --prefer-dist --optimize-autoloader
-                    cp .env.example .env
-                    php artisan key:generate
+                  # ensure correct PHP & Composer are on PATH
+                  php -v
+                  composer install --no-interaction --prefer-dist --optimize-autoloader
+
+                  # set up environment
+                  cp .env.example .env
+                  php artisan key:generate
                 '''
             }
         }
 
-        stage('Run Backend Tests') {
+        stage('Migrate & Test') {
             steps {
-                sh 'php artisan migrate'
-                sh 'php artisan test'
+                sh '''
+                  # migrate in-memory DB and run your test suite
+                  php artisan migrate
+                  php artisan test
+                '''
             }
         }
 
-        stage('Build Frontend (Optional)') {
+        stage('Frontend Build (if any)') {
+            when {
+                expression { fileExists('package.json') }
+            }
             steps {
                 sh '''
-                    npm install
-                    npm run build
+                  npm ci
+                  npm run build
                 '''
             }
         }
     }
 
     post {
-        always {
-            echo 'Pipeline finished.'
+        success {
+            echo '👍 Build succeeded!'
         }
         failure {
-            echo 'Build failed.'
+            echo '🚨 Build failed!'
+        }
+        always {
+            echo '🏁 Pipeline complete.'
         }
     }
 }
