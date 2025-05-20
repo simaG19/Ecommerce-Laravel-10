@@ -26,7 +26,7 @@ pipeline {
         stage('Install PHP dependencies') {
             steps {
                 sh '''
-                  # Install Composer manually
+                 
                   composer install
           
                   cp .env.example .env
