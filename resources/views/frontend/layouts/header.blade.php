@@ -164,9 +164,9 @@
                                     <div class="bottom">
                                         <div class="total">
                                             <span>Total</span>
-                                            <span class="total-amount">${{number_format(Helper::totalCartPrice(),2)}}</span>
+                                            <span class="total-amount">{{number_format(Helper::totalCartPrice(),2)}} Birr</span>
                                         </div>
-                                        <a href="{{route('checkout')}}" class="btn animate">Checkoout</a>
+                                        <a href="{{route('checkout')}}" class="btn animate">Checkout</a>
                                     </div>
                                 </div>
                             @endauth
