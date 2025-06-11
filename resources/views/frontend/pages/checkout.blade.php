@@ -157,10 +157,37 @@
                                     <div class="content">
                                         <div class="checkbox">
                                             {{-- <label class="checkbox-inline" for="1"><input name="updates" id="1" type="checkbox"> Check Payments</label> --}}
-                                            <form-group>
-                                                <input name="payment_method"  type="radio" value="cod"> <label> Cash On Delivery</label><br>
-                                                {{-- <input name="payment_method"  type="radio" value="paypal"> <label> PayPal</label> --}}
-                                            </form-group>
+                                          <form-group>
+    <input name="payment_method" type="radio" value="cod" id="cod">
+    <label for="cod">Cash On Delivery</label><br>
+
+    <input name="payment_method" type="radio" value="paypal" id="paypal">
+    <label for="paypal">Attach Payment Screenshot</label>
+</form-group>
+
+<!-- Screenshot upload form (initially hidden) -->
+<div id="screenshot-form" style="display: none; margin-top: 15px;">
+    <label for="payment-screenshot">Upload Payment Screenshot:</label>
+    <input type="file"
+           id="payment-screenshot"
+           name="payment_screenshot"
+           accept="image/*">
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const paypalRadio = document.getElementById('paypal');
+    const screenshotForm = document.getElementById('screenshot-form');
+
+    // Handle radio button changes
+    document.querySelectorAll('input[name="payment_method"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            screenshotForm.style.display =
+                paypalRadio.checked ? 'block' : 'none';
+        });
+    });
+});
+</script>
 
                                         </div>
                                     </div>
@@ -168,9 +195,9 @@
                                 <!--/ End Order Widget -->
                                 <!-- Payment Method Widget -->
                                 <div class="single-widget payement">
-                                    <div class="content">
+                                    {{-- <div class="content">
                                         <img src="{{('backend/img/payment-method.png')}}" alt="#">
-                                    </div>
+                                    </div> --}}
                                 </div>
                                 <!--/ End Payment Method Widget -->
                                 <!-- Button Widget -->
