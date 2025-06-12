@@ -43,113 +43,102 @@ class OrderController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        $this->validate($request,[
-            'first_name'=>'string|required',
-            'last_name'=>'string|nullable',
-            'address1'=>'string|required',
-            'address2'=>'string|nullable',
-            'coupon'=>'nullable|numeric',
-            'phone'=>'numeric|required',
-            'post_code'=>'string|nullable',
-            'email'=>'string|nullable'
-        ]);
-        // return $request->all();
+{
+    // 1) VALIDATION
+    $request->validate([
+        'first_name'         => 'required|string',
+        'last_name'          => 'nullable|string',
+        'screenshot'         => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        'address1'           => 'required|string',
+        'address2'           => 'nullable|string',
+        'coupon'             => 'nullable|numeric',
+        'phone'              => 'required|numeric',
+        'post_code'          => 'nullable|string',
+        'email'              => 'nullable|email',
+        'shipping'           => 'nullable|exists:shippings,id',
+        'payment_method'     => 'required|in:cod,paypal',
+    ]);
 
-        if(empty(Cart::where('user_id',auth()->user()->id)->where('order_id',null)->first())){
-            request()->session()->flash('error','Cart is Empty !');
-            return back();
-        }
-        // $cart=Cart::get();
-        // // return $cart;
-        // $cart_index='ORD-'.strtoupper(uniqid());
-        // $sub_total=0;
-        // foreach($cart as $cart_item){
-        //     $sub_total+=$cart_item['amount'];
-        //     $data=array(
-        //         'cart_id'=>$cart_index,
-        //         'user_id'=>$request->user()->id,
-        //         'product_id'=>$cart_item['id'],
-        //         'quantity'=>$cart_item['quantity'],
-        //         'amount'=>$cart_item['amount'],
-        //         'status'=>'new',
-        //         'price'=>$cart_item['price'],
-        //     );
-
-        //     $cart=new Cart();
-        //     $cart->fill($data);
-        //     $cart->save();
-        // }
-
-        // $total_prod=0;
-        // if(session('cart')){
-        //         foreach(session('cart') as $cart_items){
-        //             $total_prod+=$cart_items['quantity'];
-        //         }
-        // }
-
-        $order=new Order();
-        $order_data=$request->all();
-        $order_data['order_number']='ORD-'.strtoupper(Str::random(10));
-        $order_data['user_id']=$request->user()->id;
-        $order_data['shipping_id']=$request->shipping;
-        $shipping=Shipping::where('id',$order_data['shipping_id'])->pluck('price');
-        // return session('coupon')['value'];
-        $order_data['sub_total']=Helper::totalCartPrice();
-        $order_data['quantity']=Helper::cartCount();
-        if(session('coupon')){
-            $order_data['coupon']=session('coupon')['value'];
-        }
-        if($request->shipping){
-            if(session('coupon')){
-                $order_data['total_amount']=Helper::totalCartPrice()+$shipping[0]-session('coupon')['value'];
-            }
-            else{
-                $order_data['total_amount']=Helper::totalCartPrice()+$shipping[0];
-            }
-        }
-        else{
-            if(session('coupon')){
-                $order_data['total_amount']=Helper::totalCartPrice()-session('coupon')['value'];
-            }
-            else{
-                $order_data['total_amount']=Helper::totalCartPrice();
-            }
-        }
-        // return $order_data['total_amount'];
-        $order_data['status']="new";
-        if(request('payment_method')=='paypal'){
-            $order_data['payment_method']='paypal';
-            $order_data['payment_status']='paid';
-        }
-        else{
-            $order_data['payment_method']='cod';
-            $order_data['payment_status']='Unpaid';
-        }
-        $order->fill($order_data);
-        $status=$order->save();
-        if($order)
-        // dd($order->id);
-        $users=User::where('role','admin')->first();
-        $details=[
-            'title'=>'New order created',
-            'actionURL'=>route('order.show',$order->id),
-            'fas'=>'fa-file-alt'
-        ];
-        Notification::send($users, new StatusNotification($details));
-        if(request('payment_method')=='paypal'){
-            return redirect()->route('payment')->with(['id'=>$order->id]);
-        }
-        else{
-            session()->forget('cart');
-            session()->forget('coupon');
-        }
-        Cart::where('user_id', auth()->user()->id)->where('order_id', null)->update(['order_id' => $order->id]);
-
-        // dd($users);
-        request()->session()->flash('success','Your product successfully placed in order');
-        return redirect()->route('home');
+    // 2) PREVENT EMPTY CART
+    $cart = Cart::where('user_id', auth()->id())
+                ->whereNull('order_id')
+                ->first();
+    if (! $cart) {
+        session()->flash('error', 'Cart is empty!');
+        return back();
     }
+
+    // 3) BUILD & SAVE ORDER
+    $order = new Order();
+
+    // -- Basic form fields:
+    $order->first_name     = $request->first_name;
+    $order->last_name      = $request->last_name;
+    $order->address1       = $request->address1;
+    $order->address2       = $request->address2;
+    $order->phone          = $request->phone;
+    $order->post_code      = $request->post_code;
+    $order->email          = $request->email;
+    $order->country        = $request->country;
+
+    // -- Screenshot if any:
+    if ($request->hasFile('screenshot')) {
+        $order->screenshoot = $request
+            ->file('screenshot')
+            ->store('screenshots', 'public');
+    }
+
+    // -- System fields:
+    $order->order_number  = 'ORD-'.strtoupper(Str::random(10));
+    $order->user_id       = auth()->id();
+    $order->shipping_id   = $request->shipping;
+    $order->sub_total     = Helper::totalCartPrice();
+    $order->quantity      = Helper::cartCount();
+    $order->coupon        = session('coupon')['value'] ?? null;
+
+    // -- Total calculation:
+    $shippingCost = $request->shipping
+        ? Shipping::find($request->shipping)->price
+        : 0;
+
+    $order->total_amount = Helper::totalCartPrice()
+        + $shippingCost
+        - ($order->coupon ?: 0);
+
+    $order->status        = 'new';
+    $order->payment_method= $request->payment_method;
+    $order->payment_status= $request->payment_method === 'paypal'
+                             ? 'paid'
+                             : 'Unpaid';
+
+    // finally save
+    $order->save();
+
+    // 4) ATTACH CART ITEMS, NOTIFY, CLEAR SESSIONS
+    Cart::where('user_id', auth()->id())
+        ->whereNull('order_id')
+        ->update(['order_id' => $order->id]);
+
+    // send admin notification
+    $admin = User::where('role','admin')->first();
+    $details = [
+        'title'     => 'New order created',
+        'actionURL' => route('order.show', $order->id),
+        'fas'       => 'fa-file-alt',
+    ];
+    Notification::send($admin, new StatusNotification($details));
+
+    // clear sessions
+    session()->forget(['cart', 'coupon']);
+
+    session()->flash('success','Your order has been placed successfully!');
+
+    // redirect to payment or home
+    if ($request->payment_method === 'paypal') {
+        return redirect()->route('payment')->with('id', $order->id);
+    }
+    return redirect()->route('home');
+}
 
     /**
      * Display the specified resource.
