@@ -134,9 +134,15 @@ class OrderController extends Controller
     session()->flash('success','Your order has been placed successfully!');
 
     // redirect to payment or home
-    if ($request->payment_method === 'paypal') {
-        return redirect()->route('payment')->with('id', $order->id);
-    }
+   if ($request->payment_method === 'paypal') {
+    // We’ve saved the screenshot; now treat this like an offline payment
+    session()->flash(
+        'success',
+        'Thank you! Your payment screenshot has been received and is pending verification.'
+    );
+    return redirect()->route('home');
+}
+
     return redirect()->route('home');
 }
 
