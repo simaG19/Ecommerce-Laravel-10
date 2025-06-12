@@ -58,6 +58,42 @@
           </select>
         </div>
 
+
+
+{{-- A simple “repeater” for key/value pairs --}}
+<div id="properties-wrapper">
+  @if(old('properties'))
+    @foreach(old('properties') as $key => $value)
+      <div class="property-pair">
+        <input name="properties[key][]"     value="{{ $key }}"   placeholder="Attribute name">
+        <input name="properties[value][]"   value="{{ $value }}" placeholder="Attribute value">
+        <button type="button" class="remove-pair">×</button>
+      </div>
+    @endforeach
+  @endif
+</div>
+<button type="button" id="add-pair">Add Property</button>
+
+<script>
+  document.getElementById('add-pair').addEventListener('click', () => {
+    const wrapper = document.getElementById('properties-wrapper');
+    wrapper.insertAdjacentHTML('beforeend', `
+      <div class="property-pair">
+        <input name="properties[key][]"     placeholder="Attribute name">
+        <input name="properties[value][]"   placeholder="Attribute value">
+        <button type="button" class="remove-pair">×</button>
+      </div>
+    `);
+  });
+  document.addEventListener('click', e => {
+    if (e.target.matches('.remove-pair')) {
+      e.target.closest('.property-pair').remove();
+    }
+  });
+</script>
+
+
+
         <div class="form-group">
           <label for="price" class="col-form-label">Price(ETB) <span class="text-danger">*</span></label>
           <input id="price" type="number" name="price" placeholder="Enter price"  value="{{old('price')}}" class="form-control">

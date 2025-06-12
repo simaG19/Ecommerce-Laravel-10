@@ -7,6 +7,9 @@ use App\Models\Cart;
 class Product extends Model
 {
     protected $fillable=['title','slug','summary','description','cat_id','child_cat_id','price','brand_id','discount','status','photo','size','stock','is_featured','condition'];
+protected $casts = [
+  'properties' => 'array',
+];
 
     public function cat_info(){
         return $this->hasOne('App\Models\Category','id','cat_id');

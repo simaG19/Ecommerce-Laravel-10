@@ -41,45 +41,65 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        $validatedData = $request->validate([
-            'title' => 'required|string',
-            'summary' => 'required|string',
-            'description' => 'nullable|string',
-            'photo' => 'required|string',
-            'size' => 'nullable',
-            'stock' => 'required|numeric',
-            'cat_id' => 'required|exists:categories,id',
-            'brand_id' => 'nullable|exists:brands,id',
-            'child_cat_id' => 'nullable|exists:categories,id',
-            'is_featured' => 'sometimes|in:1',
-            'status' => 'required|in:active,inactive',
-            'condition' => 'required|in:default,new,hot',
-            'price' => 'required|numeric',
-            'discount' => 'nullable|numeric',
-        ]);
+{
+    // 1) VALIDATE
+    $validatedData = $request->validate([
+        'title'                 => 'required|string',
+        'summary'               => 'required|string',
+        'description'           => 'nullable|string',
+        'photo'                 => 'required|string',
+        'size'                  => 'nullable|array',
+        'stock'                 => 'required|numeric',
+        'cat_id'                => 'required|exists:categories,id',
+        'brand_id'              => 'nullable|exists:brands,id',
+        'child_cat_id'          => 'nullable|exists:categories,id',
+        'is_featured'           => 'sometimes|in:1',
+        'status'                => 'required|in:active,inactive',
+        'condition'             => 'required|in:default,new,hot',
+        'price'                 => 'required|numeric',
+        'discount'              => 'nullable|numeric',
 
-        $slug = generateUniqueSlug($request->title, Product::class);
-        $validatedData['slug'] = $slug;
-        $validatedData['is_featured'] = $request->input('is_featured', 0);
+        // JSON properties
+        'properties'            => 'nullable|array',
+        'properties.key.*'      => 'required_with:properties|string',
+        'properties.value.*'    => 'required_with:properties|string',
+    ]);
 
-        if ($request->has('size')) {
-            $validatedData['size'] = implode(',', $request->input('size'));
-        } else {
-            $validatedData['size'] = '';
+    // 2) TRANSFORM properties → single associative array
+    if (! empty($validatedData['properties'])) {
+        $props = [];
+        foreach ($validatedData['properties']['key'] as $i => $name) {
+            $props[$name] = $validatedData['properties']['value'][$i] ?? null;
         }
-
-        $product = Product::create($validatedData);
-
-        $message = $product
-            ? 'Product Successfully added'
-            : 'Please try again!!';
-
-        return redirect()->route('product.index')->with(
-            $product ? 'success' : 'error',
-            $message
-        );
+        $validatedData['properties'] = $props;
+    } else {
+        // ensure it's null if nothing provided
+        $validatedData['properties'] = null;
     }
+
+    // 3) GENERATE SLUG & HANDLE is_featured
+    $validatedData['slug']        = generateUniqueSlug($validatedData['title'], Product::class);
+    $validatedData['is_featured'] = $request->has('is_featured') ? 1 : 0;
+
+    // 4) HANDLE size array → comma string (if you still need it)
+    if (! empty($validatedData['size'])) {
+        $validatedData['size'] = implode(',', $validatedData['size']);
+    } else {
+        $validatedData['size'] = '';
+    }
+
+    // 5) CREATE
+    $product = Product::create($validatedData);
+
+    // 6) REDIRECT
+    $message = $product
+        ? 'Product successfully added.'
+        : 'There was an error; please try again.';
+
+    return redirect()
+        ->route('product.index')
+        ->with($product ? 'success' : 'error', $message);
+}
 
     /**
      * Display the specified resource.
