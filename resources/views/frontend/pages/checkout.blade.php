@@ -24,7 +24,7 @@
     <!-- Start Checkout -->
     <section class="shop checkout section">
         <div class="container">
-                <form class="form" method="POST" action="{{route('cart.order')}}">
+                <form class="form" method="POST" action="{{ route('cart.order') }}" enctype="multipart/form-data">
                     @csrf
                     <div class="row">
 
@@ -43,24 +43,6 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    {{-- <div class="col-lg-6 col-md-6 col-12">
-                                        <div class="form-group">
-                                            <label>Last Name<span>*</span></label>
-                                            <input type="text" name="last_name" placeholder="" value="{{old('lat_name')}}">
-                                            @error('last_name')
-                                                <span class='text-danger'>{{$message}}</span>
-                                            @enderror
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-6 col-md-6 col-12">
-                                        <div class="form-group">
-                                            <label>Email Address<span>*</span></label>
-                                            <input type="email" name="email" placeholder="" value="{{old('email')}}">
-                                            @error('email')
-                                                <span class='text-danger'>{{$message}}</span>
-                                            @enderror
-                                        </div>
-                                    </div> --}}
                                     <div class="col-lg-6 col-md-6 col-12">
                                         <div class="form-group">
                                             <label>Phone Number <span>*</span></label>
@@ -88,24 +70,6 @@
                                             @enderror
                                         </div>
                                     </div>
-                                    {{-- <div class="col-lg-6 col-md-6 col-12">
-                                        <div class="form-group">
-                                            <label>Address Line 2</label>
-                                            <input type="text" name="address2" placeholder="" value="{{old('address2')}}">
-                                            @error('address2')
-                                                <span class='text-danger'>{{$message}}</span>
-                                            @enderror
-                                        </div>
-                                    </div> --}}
-                                    {{-- <div class="col-lg-6 col-md-6 col-12">
-                                        <div class="form-group">
-                                            <label>Postal Code</label>
-                                            <input type="text" name="post_code" placeholder="" value="{{old('post_code')}}">
-                                            @error('post_code')
-                                                <span class='text-danger'>{{$message}}</span>
-                                            @enderror
-                                        </div>
-                                    </div> --}}
 
                                 </div>
                                 <!--/ End Form -->
@@ -170,7 +134,7 @@
     <label for="payment-screenshot">Upload Payment Screenshot:</label>
     <input type="file"
            id="payment-screenshot"
-           name="payment_screenshot"
+           name="screenshot"
            accept="image/*">
 </div>
 
