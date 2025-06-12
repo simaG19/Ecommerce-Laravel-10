@@ -49,7 +49,7 @@
 
     Route::get('user/register', [FrontendController::class, 'register'])->name('register.form');
     Route::post('user/register', [FrontendController::class, 'registerSubmit'])->name('register.submit');
-   
+
     // Reset password
     Route::get('password/reset', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
     Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
@@ -86,14 +86,19 @@
     })->name('cart');
     Route::get('/checkout', [CartController::class, 'checkout'])->name('checkout')->middleware('user');
 // Wishlist
+
+
     Route::get('/wishlist', function () {
         return view('frontend.pages.wishlist');
     })->name('wishlist');
     Route::get('/wishlist/{slug}', [WishlistController::class, 'wishlist'])->name('add-to-wishlist')->middleware('user');
     Route::get('wishlist-delete/{id}', [WishlistController::class, 'wishlistDelete'])->name('wishlist-delete');
     Route::post('cart/order', [OrderController::class, 'store'])->name('cart.order');
-    Route::get('order/pdf/{id}', [OrderController::class, 'pdf'])->name('order.pdf');
-    Route::get('/income', [OrderController::class, 'incomeChart'])->name('product.order.income');
+  // routes/web.php
+Route::get('order/pdf/{id}', [OrderController::class, 'pdf'])
+     ->name('order.pdf');
+
+     Route::get('/income', [OrderController::class, 'incomeChart'])->name('product.order.income');
 // Route::get('/user/chart',[AdminController::class, 'userPieChart'])->name('user.piechart');
     Route::get('/product-grids', [FrontendController::class, 'productGrids'])->name('product-grids');
     Route::get('/product-lists', [FrontendController::class, 'productLists'])->name('product-lists');
