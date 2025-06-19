@@ -117,23 +117,36 @@
 											<!--/ End Size -->
 											<!-- Product Buy -->
 
-  @foreach($product_detail->attributes as $attr)
-    <div class="form-group">
-        <p>attt</p>
-      <label>{{ $attr->name }}</label>
-      <select
-        name="attributes[{{ $attr->id }}][]"
-        multiple
-        class="form-control"
-      >
-        @foreach($attr->values as $val)
-          <option value="{{ $val->id }}">
-            {{ $val->value }}
-          </option>
-        @endforeach
-      </select>
-    </div>
-  @endforeach
+@foreach($product_detail->attributes as $attr)
+  <div style="margin-bottom: 1rem;">
+    <label
+      for="attr-{{ $attr->id }}"
+      style="display: block; margin-bottom: .5rem; font-weight: 600;"
+    >
+      {{ $attr->name }}
+    </label>
+    <select
+      id="attr-{{ $attr->id }}"
+      name="attributes[{{ $attr->id }}]"
+      style="
+        width: 100%;
+        max-width: 300px;
+        padding: .5rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background: #fff;
+      "
+    >
+      <option value="">-- Select {{ $attr->name }} --</option>
+      @foreach($attr->values as $val)
+        <option value="{{ $val->id }}">
+          {{ $val->value }}
+        </option>
+      @endforeach
+    </select>
+  </div>
+@endforeach
+
 
 
 											<div class="product-buy">
