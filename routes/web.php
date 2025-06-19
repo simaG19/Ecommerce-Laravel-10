@@ -88,6 +88,14 @@
 // Wishlist
 
 
+
+Route::get('orders/export', [OrderController::class, 'exportCsv'])->name('orders.export');
+
+
+
+
+
+
     Route::get('/wishlist', function () {
         return view('frontend.pages.wishlist');
     })->name('wishlist');

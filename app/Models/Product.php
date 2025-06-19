@@ -49,4 +49,9 @@ protected $casts = [
         return $this->hasOne(Brand::class,'id','brand_id');
     }
 
+        public function attributes()
+    {
+        return $this->hasMany(ProductAttribute::class);
+    }
+
 }

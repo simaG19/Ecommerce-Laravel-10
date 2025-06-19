@@ -15,44 +15,65 @@ class CartController extends Controller
         $this->product=$product;
     }
 
-    public function addToCart(Request $request){
-        // dd($request->all());
-        if (empty($request->slug)) {
-            request()->session()->flash('error','Invalid Products');
-            return back();
-        }        
-        $product = Product::where('slug', $request->slug)->first();
-        // return $product;
-        if (empty($product)) {
-            request()->session()->flash('error','Invalid Products');
-            return back();
+public function addToCart(Request $request)
+{
+    // 1) VALIDATE INPUT (including attributes[..][..])
+    $data = $request->validate([
+        'slug'                => 'required|string|exists:products,slug',
+        'attributes'          => 'nullable|array',
+        'attributes.*'        => 'array',
+        'attributes.*.*'      => 'integer|exists:attribute_values,id',
+    ]);
+
+    $product = Product::where('slug', $data['slug'])->firstOrFail();
+
+    // 2) BUILD THE CART-ROW QUERY
+    $query = Cart::where('user_id', auth()->id())
+                 ->whereNull('order_id')
+                 ->where('product_id', $product->id);
+
+    if (! empty($data['attributes'])) {
+        // JSON‑encode to compare apples‑to‑apples
+        $query->where('attribute_options', json_encode($data['attributes']));
+    } else {
+        $query->whereNull('attribute_options');
+    }
+
+    $existing = $query->first();
+
+    // 3) UPDATE QUANTITY IF ALREADY IN CART
+    if ($existing) {
+        $existing->quantity++;
+        $existing->amount = $existing->price * $existing->quantity;
+
+        if ($existing->product->stock < $existing->quantity) {
+            return back()->with('error','Stock not sufficient!');
         }
 
-        $already_cart = Cart::where('user_id', auth()->user()->id)->where('order_id',null)->where('product_id', $product->id)->first();
-        // return $already_cart;
-        if($already_cart) {
-            // dd($already_cart);
-            $already_cart->quantity = $already_cart->quantity + 1;
-            $already_cart->amount = $product->price+ $already_cart->amount;
-            // return $already_cart->quantity;
-            if ($already_cart->product->stock < $already_cart->quantity || $already_cart->product->stock <= 0) return back()->with('error','Stock not sufficient!.');
-            $already_cart->save();
-            
-        }else{
-            
-            $cart = new Cart;
-            $cart->user_id = auth()->user()->id;
-            $cart->product_id = $product->id;
-            $cart->price = ($product->price-($product->price*$product->discount)/100);
-            $cart->quantity = 1;
-            $cart->amount=$cart->price*$cart->quantity;
-            if ($cart->product->stock < $cart->quantity || $cart->product->stock <= 0) return back()->with('error','Stock not sufficient!.');
-            $cart->save();
-            $wishlist=Wishlist::where('user_id',auth()->user()->id)->where('cart_id',null)->update(['cart_id'=>$cart->id]);
+        $existing->save();
+    }
+    // 4) CREATE NEW CART ROW WITH attribute_options
+    else {
+        $cart = new Cart();
+        $cart->user_id           = auth()->id();
+        $cart->product_id        = $product->id;
+        $cart->price             = ($product->price * (100 - $product->discount)) / 100;
+        $cart->quantity          = 1;
+        $cart->amount            = $cart->price;
+        $cart->attribute_options = $data['attributes'] ?? null;
+
+        if ($cart->product->stock < 1) {
+            return back()->with('error','Stock not sufficient!');
         }
-        request()->session()->flash('success','Product successfully added to cart');
-        return back();       
-    }  
+
+        $cart->save();
+    }
+
+    session()->flash('success','Product successfully added to cart');
+    return back();
+}
+
+
 
     public function singleAddToCart(Request $request){
         $request->validate([
@@ -69,7 +90,7 @@ class CartController extends Controller
         if ( ($request->quant[1] < 1) || empty($product) ) {
             request()->session()->flash('error','Invalid Products');
             return back();
-        }    
+        }
 
         $already_cart = Cart::where('user_id', auth()->user()->id)->where('order_id',null)->where('product_id', $product->id)->first();
 
@@ -83,9 +104,9 @@ class CartController extends Controller
             if ($already_cart->product->stock < $already_cart->quantity || $already_cart->product->stock <= 0) return back()->with('error','Stock not sufficient!.');
 
             $already_cart->save();
-            
+
         }else{
-            
+
             $cart = new Cart;
             $cart->user_id = auth()->user()->id;
             $cart->product_id = $product->id;
@@ -97,19 +118,19 @@ class CartController extends Controller
             $cart->save();
         }
         request()->session()->flash('success','Product successfully added to cart.');
-        return back();       
-    } 
-    
+        return back();
+    }
+
     public function cartDelete(Request $request){
         $cart = Cart::find($request->id);
         if ($cart) {
             $cart->delete();
             request()->session()->flash('success','Cart successfully removed');
-            return back();  
+            return back();
         }
         request()->session()->flash('error','Error please try again');
-        return back();       
-    }     
+        return back();
+    }
 
     public function cartUpdate(Request $request){
         // dd($request->all());
@@ -132,7 +153,7 @@ class CartController extends Controller
                     }
                     $cart->quantity = ($cart->product->stock > $quant) ? $quant  : $cart->product->stock;
                     // return $cart;
-                    
+
                     if ($cart->product->stock <=0) continue;
                     $after_price=($cart->product->price-($cart->product->price*$cart->product->discount)/100);
                     $cart->amount = $after_price * $quant;
@@ -146,7 +167,7 @@ class CartController extends Controller
             return back()->with($error)->with('success', $success);
         }else{
             return back()->with('Cart Invalid!');
-        }    
+        }
     }
 
     // public function addToCart(Request $request){
@@ -176,7 +197,7 @@ class CartController extends Controller
     //             'price'=>$this->product->price,
     //             'photo'=>$this->product->photo,
     //         );
-            
+
     //         $price=$this->product->price;
     //         if($this->product->discount){
     //             $price=($price-($price*$this->product->discount)/100);

@@ -9,11 +9,17 @@
          </div>
      </div>
     <div class="card-header py-3">
-      <h6 class="m-0 font-weight-bold text-primary float-left">Order Lists</h6>
+      <h6 class="m-0 font-weight-bold text-primary float-left">Orderr Lists</h6>
     </div>
     <div class="card-body">
       <div class="table-responsive">
         @if(count($orders)>0)
+
+           <div class="mb-4">
+        <a href="{{ route('orders.export') }}" class="btn btn-primary">
+            <i class="fas fa-download"></i> Download CSV
+        </a>
+    </div>
     <table class="table table-bordered" id="order-dataTable" width="100%" cellspacing="0">
   <thead>
     <tr>

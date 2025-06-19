@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Cart;
 use App\Models\Order;
+use App\Models\OrderItem;   // ← Make sure this line is present
 use App\Models\Shipping;
 use App\User;
-use PDF;
-use Notification;
-use Helper;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Notification;
 use App\Notifications\StatusNotification;
+use Helper;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class OrderController extends Controller
 {
@@ -24,6 +25,48 @@ class OrderController extends Controller
     {
         $orders=Order::orderBy('id','DESC')->paginate(10);
         return view('backend.order.index')->with('orders',$orders);
+    }
+
+
+      public function exportCsv(): StreamedResponse
+    {
+        $fileName = 'orders_' . now()->format('Ymd_His') . '.csv';
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => "attachment; filename=\"{$fileName}\"",
+        ];
+
+        $columns = [
+            'ID', 'Order Number', 'Name', 'Email', 'Quantity', 'Payment Status',
+            'Total Amount', 'Status', 'Created At'
+        ];
+
+        $callback = function () use ($columns) {
+            $handle = fopen('php://output', 'w');
+            // Add BOM for Excel
+            fprintf($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
+            fputcsv($handle, $columns);
+
+            Order::chunk(200, function ($orders) use ($handle) {
+                foreach ($orders as $order) {
+                    fputcsv($handle, [
+                        $order->id,
+                        $order->order_number,
+                        $order->first_name . ' ' . $order->last_name,
+                        $order->email,
+                        $order->quantity,
+                        $order->payment_status,
+                        number_format($order->total_amount, 2),
+                        $order->status,
+                        $order->created_at->toDateTimeString(),
+                    ]);
+                }
+            });
+
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
     /**
@@ -42,110 +85,111 @@ class OrderController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-{
-    // 1) VALIDATION
-    $request->validate([
-        'first_name'         => 'required|string',
-        'last_name'          => 'nullable|string',
-        'screenshot'         => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        'address1'           => 'required|string',
-        'address2'           => 'nullable|string',
-        'coupon'             => 'nullable|numeric',
-        'phone'              => 'required|numeric',
-        'post_code'          => 'nullable|string',
-        'email'              => 'nullable|email',
-        'shipping'           => 'nullable|exists:shippings,id',
-        'payment_method'     => 'required|in:cod,paypal',
-    ]);
 
-    // 2) PREVENT EMPTY CART
-    $cart = Cart::where('user_id', auth()->id())
-                ->whereNull('order_id')
-                ->first();
-    if (! $cart) {
-        session()->flash('error', 'Cart is empty!');
-        return back();
+public function store(Request $request)
+    {
+        // 1) VALIDATION (same as before)
+        $request->validate([
+            'first_name'      => 'required|string',
+            'last_name'       => 'nullable|string',
+            'screenshot'      => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'address1'        => 'required|string',
+            'address2'        => 'nullable|string',
+            'coupon'          => 'nullable|numeric',
+            'phone'           => 'required|numeric',
+            'post_code'       => 'nullable|string',
+            'email'           => 'nullable|email',
+            'country'         => 'required|string',
+            'shipping'        => 'nullable|exists:shippings,id',
+            'payment_method'  => 'required|in:cod,paypal',
+        ]);
+
+        // 2) FETCH CART LINES
+        $carts = Cart::where('user_id', auth()->id())
+                     ->whereNull('order_id')
+                     ->get();
+
+        if ($carts->isEmpty()) {
+            return back()->with('error', 'Your cart is empty!');
+        }
+
+        // 3) BUILD & SAVE ORDER
+        $order = new Order();
+        $order->first_name      = $request->first_name;
+        $order->last_name       = $request->last_name;
+        $order->address1        = $request->address1;
+        $order->address2        = $request->address2;
+        $order->phone           = $request->phone;
+        $order->post_code       = $request->post_code;
+        $order->email           = $request->email;
+        $order->country         = $request->country;
+
+        if ($request->hasFile('screenshot')) {
+            $order->screenshoot = $request
+                ->file('screenshot')
+                ->store('screenshots', 'public');
+        }
+
+        $order->order_number   = 'ORD-'.Str::upper(Str::random(10));
+        $order->user_id        = auth()->id();
+        $order->shipping_id    = $request->shipping;
+        $order->sub_total      = Helper::totalCartPrice();
+        $order->quantity       = Helper::cartCount();
+        $order->coupon         = session('coupon')['value'] ?? null;
+
+        $shippingCost = $request->shipping
+            ? Shipping::find($request->shipping)->price
+            : 0;
+        $order->total_amount   = Helper::totalCartPrice()
+                                 + $shippingCost
+                                 - ($order->coupon ?: 0);
+
+        $order->status         = 'new';
+        $order->payment_method = $request->payment_method;
+        $order->payment_status = $request->payment_method === 'paypal'
+                                 ? 'paid'
+                                 : 'Unpaid';
+
+        $order->save();
+
+        // 4) SAVE EACH CART LINE AS AN ORDER ITEM
+        foreach ($carts as $cart) {
+            OrderItem::create([
+                'order_id'          => $order->id,
+                'product_id'        => $cart->product_id,
+                'price'             => $cart->price,
+                'quantity'          => $cart->quantity,
+                'amount'            => $cart->amount,            // price * quantity
+                'attribute_options' => $cart->attribute_options, // keep the JSON array
+            ]);
+        }
+
+        // 5) MARK CARTS AS ORDERED
+        Cart::whereIn('id', $carts->pluck('id'))
+            ->update(['order_id' => $order->id]);
+
+        // 6) NOTIFY ADMIN
+        $admin = User::where('role', 'admin')->first();
+        $details = [
+            'title'     => 'New order created',
+            'actionURL' => route('order.show', $order->id),
+            'fas'       => 'fa-file-alt',
+        ];
+        Notification::send($admin, new StatusNotification($details));
+
+        // 7) CLEAR SESSIONS & REDIRECT
+        session()->forget(['cart', 'coupon']);
+        session()->flash('success', 'Your order has been placed successfully!');
+
+        if ($request->payment_method === 'paypal') {
+            session()->flash(
+                'success',
+                'Thank you! Your payment screenshot has been received and is pending verification.'
+            );
+        }
+
+        return redirect()->route('home');
     }
-
-    // 3) BUILD & SAVE ORDER
-    $order = new Order();
-
-    // -- Basic form fields:
-    $order->first_name     = $request->first_name;
-    $order->last_name      = $request->last_name;
-    $order->address1       = $request->address1;
-    $order->address2       = $request->address2;
-    $order->phone          = $request->phone;
-    $order->post_code      = $request->post_code;
-    $order->email          = $request->email;
-    $order->country        = $request->country;
-
-    // -- Screenshot if any:
-    if ($request->hasFile('screenshot')) {
-        $order->screenshoot = $request
-            ->file('screenshot')
-            ->store('screenshots', 'public');
-    }
-
-    // -- System fields:
-    $order->order_number  = 'ORD-'.strtoupper(Str::random(10));
-    $order->user_id       = auth()->id();
-    $order->shipping_id   = $request->shipping;
-    $order->sub_total     = Helper::totalCartPrice();
-    $order->quantity      = Helper::cartCount();
-    $order->coupon        = session('coupon')['value'] ?? null;
-
-    // -- Total calculation:
-    $shippingCost = $request->shipping
-        ? Shipping::find($request->shipping)->price
-        : 0;
-
-    $order->total_amount = Helper::totalCartPrice()
-        + $shippingCost
-        - ($order->coupon ?: 0);
-
-    $order->status        = 'new';
-    $order->payment_method= $request->payment_method;
-    $order->payment_status= $request->payment_method === 'paypal'
-                             ? 'paid'
-                             : 'Unpaid';
-
-    // finally save
-    $order->save();
-
-    // 4) ATTACH CART ITEMS, NOTIFY, CLEAR SESSIONS
-    Cart::where('user_id', auth()->id())
-        ->whereNull('order_id')
-        ->update(['order_id' => $order->id]);
-
-    // send admin notification
-    $admin = User::where('role','admin')->first();
-    $details = [
-        'title'     => 'New order created',
-        'actionURL' => route('order.show', $order->id),
-        'fas'       => 'fa-file-alt',
-    ];
-    Notification::send($admin, new StatusNotification($details));
-
-    // clear sessions
-    session()->forget(['cart', 'coupon']);
-
-    session()->flash('success','Your order has been placed successfully!');
-
-    // redirect to payment or home
-   if ($request->payment_method === 'paypal') {
-    // We’ve saved the screenshot; now treat this like an offline payment
-    session()->flash(
-        'success',
-        'Thank you! Your payment screenshot has been received and is pending verification.'
-    );
-    return redirect()->route('home');
-}
-
-    return redirect()->route('home');
-}
-
     /**
      * Display the specified resource.
      *

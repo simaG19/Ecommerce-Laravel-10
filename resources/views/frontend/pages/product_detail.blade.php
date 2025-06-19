@@ -116,6 +116,26 @@
 											@endif
 											<!--/ End Size -->
 											<!-- Product Buy -->
+
+  @foreach($product_detail->attributes as $attr)
+    <div class="form-group">
+        <p>attt</p>
+      <label>{{ $attr->name }}</label>
+      <select
+        name="attributes[{{ $attr->id }}][]"
+        multiple
+        class="form-control"
+      >
+        @foreach($attr->values as $val)
+          <option value="{{ $val->id }}">
+            {{ $val->value }}
+          </option>
+        @endforeach
+      </select>
+    </div>
+  @endforeach
+
+
 											<div class="product-buy">
 												<form action="{{route('single-add-to-cart')}}" method="POST">
 													@csrf

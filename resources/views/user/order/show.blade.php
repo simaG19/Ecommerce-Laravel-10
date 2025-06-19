@@ -4,8 +4,8 @@
 
 @section('main-content')
 <div class="card">
-<h5 class="card-header">Order       <a href="{{route('order.pdf',$order->id)}}" class=" btn btn-sm btn-primary shadow-sm float-right"><i class="fas fa-download fa-sm text-white-50"></i> Generatee PDF</a>
-  </h5>
+{{-- <h5 class="card-header">Order       <a href="{{route('order.pdf',$order->id)}}" class=" btn btn-sm btn-primary shadow-sm float-right"><i class="fas fa-download fa-sm text-white-50"></i> Generatee PDF</a>
+  </h5> --}}
   <div class="card-body">
     @if($order)
     <table class="table table-striped table-hover">
@@ -53,6 +53,57 @@
         </tr>
       </tbody>
     </table>
+
+
+
+
+    {{-- Order Items Table --}}
+<div class="order-items mt-5">
+  <h4 class="text-center pb-4">ORDER ITEMS</h4>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Product</th>
+        <th>Price (Birr)</th>
+        <th>Quantity</th>
+        <th>Line Total (Birr)</th>
+        <th>Options</th>
+      </tr>
+    </thead>
+    <tbody>
+      @forelse($order->items as $idx => $item)
+        <tr>
+          <td>{{ $idx + 1 }}</td>
+          <td>{{ $item->product->title ?? '—' }}</td>
+          <td>{{ number_format($item->price, 2) }}</td>
+          <td>{{ $item->quantity }}</td>
+          <td>{{ number_format($item->amount, 2) }}</td>
+          <td>
+            @if(!empty($item->attribute_options))
+              @foreach($item->attribute_options as $attrId => $valueIds)
+                @php
+                  $attr = \App\Models\ProductAttribute::find($attrId);
+                  $values = \App\Models\AttributeValue::whereIn('id', $valueIds)
+                                    ->pluck('value')
+                                    ->all();
+                @endphp
+                <strong>{{ $attr->name }}:</strong>
+                {{ implode(', ', $values) }}<br>
+              @endforeach
+            @else
+              —
+            @endif
+          </td>
+        </tr>
+      @empty
+        <tr>
+          <td colspan="6" class="text-center">No items found for this order.</td>
+        </tr>
+      @endforelse
+    </tbody>
+  </table>
+</div>
 
     <section class="confirmation_part section_padding">
       <div class="order_boxes">
