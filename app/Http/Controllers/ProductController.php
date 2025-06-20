@@ -41,75 +41,73 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
    public function store(Request $request)
-{
-    // 1) VALIDATE
-    $validated = $request->validate([
-        'title'                  => 'required|string',
-        'summary'                => 'required|string',
-        'description'            => 'nullable|string',
-        'photo'                  => 'required|string',
-        'size'                   => 'nullable|array',
-        'stock'                  => 'required|numeric',
-        'cat_id'                 => 'required|exists:categories,id',
-        'brand_id'               => 'nullable|exists:brands,id',
-        'child_cat_id'           => 'nullable|exists:categories,id',
-        'is_featured'            => 'sometimes|in:1',
-        'status'                 => 'required|in:active,inactive',
-        'condition'              => 'required|in:default,new,hot',
-        'price'                  => 'required|numeric',
-        'discount'               => 'nullable|numeric',
+    {
+        // 1) VALIDATION
+        $validated = $request->validate([
+            'title'               => 'required|string',
+            'summary'             => 'required|string',
+            'description'         => 'nullable|string',
+            'photo'               => 'required|string',
+            'size'                => 'nullable|array',
+            'stock'               => 'required|integer',
+            'cat_id'              => 'required|exists:categories,id',
+            'child_cat_id'        => 'nullable|exists:categories,id',
+            'brand_id'            => 'nullable|exists:brands,id',
+            'price'               => 'required|numeric',
+            'discount'            => 'nullable|numeric',
+            'status'              => 'required|in:active,inactive',
+            'condition'           => 'required|in:default,new,hot',
+            'is_featured'         => 'sometimes|in:1',
 
-        // relational attributes input:
-        'attributes'             => 'nullable|array',
-        'attributes.*.name'      => 'required_with:attributes|string',
-        'attributes.*.values'    => 'required_with:attributes|array|min:1',
-        'attributes.*.values.*'  => 'required|string',
-    ]);
+            // attributes with per-value labels & prices
+            'attributes'                  => 'nullable|array',
+            'attributes.*.name'           => 'required_with:attributes|string',
+            'attributes.*.values'         => 'required_with:attributes|array|min:1',
+            'attributes.*.values.*.label' => 'required|string',
+            'attributes.*.values.*.price' => 'required|numeric|min:0',
+        ]);
 
-    // 2) SLUG & FEATURED FLAG
-    $validated['slug']         = generateUniqueSlug($validated['title'], Product::class);
-    $validated['is_featured']  = $request->has('is_featured') ? 1 : 0;
+        // 2) SLUG & FEATURED FLAG
+        $validated['slug']        = Str::slug($validated['title']) . '-' . Str::random(6);
+        $validated['is_featured'] = $request->has('is_featured') ? 1 : 0;
 
-    // 3) SIZE ARRAY → STRING
-    if (! empty($validated['size'])) {
-        $validated['size'] = implode(',', $validated['size']);
-    } else {
-        $validated['size'] = '';
-    }
-
-    // 4) CREATE THE PRODUCT
-    $product = Product::create(Arr::only($validated, [
-        'title','slug','summary','description','photo',
-        'size','stock','cat_id','child_cat_id',
-        'brand_id','status','condition','price','discount',
-        'is_featured'
-    ]));
-
-    // 5) SAVE EACH ATTRIBUTE + ITS VALUES
-    if ($product && ! empty($validated['attributes'])) {
-        foreach ($validated['attributes'] as $attr) {
-            // create the attribute row
-            $pa = $product->attributes()->create([
-                'name' => $attr['name']
-            ]);
-
-            // then create each value
-            foreach ($attr['values'] as $value) {
-                $pa->values()->create(['value' => $value]);
-            }
+        // 3) SIZE ARRAY → STRING
+        if (! empty($validated['size'])) {
+            $validated['size'] = implode(',', $validated['size']);
+        } else {
+            $validated['size'] = '';
         }
+
+        // 4) CREATE THE PRODUCT
+        $product = Product::create(
+            Arr::only($validated, [
+                'title','slug','summary','description','photo',
+                'size','stock','cat_id','child_cat_id','brand_id',
+                'price','discount','status','condition','is_featured',
+            ])
+        );
+
+        // 5) SAVE EACH ATTRIBUTE + ITS VALUES (with price)
+        if ($product && ! empty($validated['attributes'])) {
+           foreach ($validated['attributes'] as $attr) {
+    $pa = $product->attributes()->create(['name' => $attr['name']]);
+
+    foreach ($attr['values'] as $valueData) {
+        \Log::debug('CREATING VALUE:', $valueData);  // debug again
+        $pa->values()->create([
+            'value' => $valueData['label'],
+            'price' => $valueData['price'],   // this must match the input name
+        ]);
     }
-
-    // 6) REDIRECT WITH FEEDBACK
-    $message = $product
-        ? 'Product successfully added.'
-        : 'There was an error; please try again.';
-
-    return redirect()
-        ->route('product.index')
-        ->with($product ? 'success' : 'error', $message);
 }
 
+        }
+
+        // 6) REDIRECT WITH FEEDBACK
+        return redirect()
+            ->route('product.index')
+            ->with('success', 'Product and its attributes saved successfully.');
+    }
     /**
      * Display the specified resource.
      *
