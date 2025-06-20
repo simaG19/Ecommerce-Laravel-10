@@ -542,7 +542,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 
 <script>
-// jQuery version with new price design
+// jQuery version - Use last selected attribute price
 $(document).ready(function() {
     console.log('jQuery price updater initializing...');
 
@@ -554,7 +554,9 @@ $(document).ready(function() {
     function updatePrices() {
         console.log('Updating prices with jQuery...');
 
-        var totalAdditionalPrice = 0;
+        var newBasePrice = originalBase; // Start with original price
+        var lastAttributePrice = 0;
+        var hasSelectedAttribute = false;
 
         $('.attribute-select').each(function() {
             var selectedValue = $(this).val();
@@ -562,23 +564,35 @@ $(document).ready(function() {
 
             if (selectedValue !== '') {
                 var selectedOption = $(this).find('option:selected');
-                var price = parseFloat(selectedOption.data('price')) || 0;
-                totalAdditionalPrice += price;
-                console.log('Added price:', price);
+                var attributePrice = parseFloat(selectedOption.data('price')) || 0;
+
+                if (attributePrice > 0) {
+                    lastAttributePrice = attributePrice;
+                    hasSelectedAttribute = true;
+                    console.log('Found attribute price:', attributePrice);
+                }
             }
         });
 
-        console.log('Total additional price:', totalAdditionalPrice);
+        // Use the last found attribute price, or original if none
+        if (hasSelectedAttribute) {
+            newBasePrice = lastAttributePrice;
+            console.log('Using attribute price:', lastAttributePrice);
+        } else {
+            newBasePrice = originalBase;
+            console.log('No attribute selected, using original price:', originalBase);
+        }
 
-        // Calculate new prices
-        var newBase = originalBase + totalAdditionalPrice;
-        var newDiscounted = newBase - (newBase * discountPercentage / 100);
+        console.log('Final base price:', newBasePrice);
 
-        // Update the price display with new design
-        $('#discounted-price').text(newDiscounted.toFixed(2));
-        $('#original-price').text(newBase.toFixed(2) + ' Birr');
+        // Calculate discounted price
+        var newDiscounted = newBasePrice - (newBasePrice * discountPercentage / 100);
 
-        console.log('Updated - Base:', newBase, 'Discounted:', newDiscounted);
+        // Update the price display
+        $('#discounted-price').text(newDiscounted.toFixed(2) + ' Birr');
+        $('#original-price').text(newBasePrice.toFixed(2) + ' Birr');
+
+        console.log('Updated - Base:', newBasePrice, 'Discounted:', newDiscounted);
     }
 
     // Attach change event
@@ -591,5 +605,4 @@ $(document).ready(function() {
     updatePrices();
 });
 </script>
-
 @endpush
