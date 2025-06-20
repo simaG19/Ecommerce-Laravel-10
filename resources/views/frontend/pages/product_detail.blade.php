@@ -65,125 +65,102 @@
 										<div class="product-des">
 											<!-- Description -->
 											<div class="short">
-												<h4>{{$product_detail->title}}</h4>
+												<h4>{{ $product_detail->title }}</h4>
 												<div class="rating-main">
-													<ul class="rating">
-														@php
-															$rate=ceil($product_detail->getReview->avg('rate'))
-														@endphp
-															@for($i=1; $i<=5; $i++)
-																@if($rate>=$i)
-																	<li><i class="fa fa-star"></i></li>
-																@else
-																	<li><i class="fa fa-star-o"></i></li>
-																@endif
-															@endfor
-													</ul>
-													<a href="#" class="total-review">({{$product_detail['getReview']->count()}}) Review</a>
-                                                </div>
-                                                @php
-                                                    $after_discount=($product_detail->price-(($product_detail->price*$product_detail->discount)/100));
-                                                @endphp
-												<p class="price"><span class="discount">{{number_format($after_discount,2)}}</span><s>{{number_format($product_detail->price,2)}} Birr</s> </p>
-												<p class="description">{!!($product_detail->summary)!!}</p>
-											</div>
-											<!--/ End Description -->
-											<!-- Color -->
-											{{-- <div class="color">
-												<h4>Available Options <span>Color</span></h4>
-												<ul>
-													<li><a href="#" class="one"><i class="ti-check"></i></a></li>
-													<li><a href="#" class="two"><i class="ti-check"></i></a></li>
-													<li><a href="#" class="three"><i class="ti-check"></i></a></li>
-													<li><a href="#" class="four"><i class="ti-check"></i></a></li>
-												</ul>
-											</div> --}}
-											<!--/ End Color -->
-											<!-- Size -->
-											@if($product_detail->size)
-												<div class="size mt-4">
-													<h4>Size</h4>
-													<ul>
-														@php
-															$sizes=explode(',',$product_detail->size);
-															// dd($sizes);
-														@endphp
-														@foreach($sizes as $size)
-														<li><a href="#" class="one">{{$size}}</a></li>
-														@endforeach
-													</ul>
+												  <ul class="rating">
+													@php $rate = ceil($product_detail->getReview->avg('rate')) @endphp
+													@for($i = 1; $i <= 5; $i++)
+													  @if($rate >= $i)
+														<li><i class="fa fa-star"></i></li>
+													  @else
+														<li><i class="fa fa-star-o"></i></li>
+													  @endif
+													@endfor
+												  </ul>
+												  <a href="#" class="total-review">({{ $product_detail->getReview->count() }}) Review</a>
 												</div>
-											@endif
-											<!--/ End Size -->
-											<!-- Product Buy -->
 
+											@php
+  $base = $product_detail->price;
+  $discount = $product_detail->discount ?? 0;
+  $after_discount = $base - ($base * $discount / 100);
+@endphp
+
+												{{-- <p class="price">
+												  Base: <span id="base-price">{{ number_format($base,2) }}</span> Birr<br>
+												  Discounted: <span id="discounted-price">{{ number_format($after_discount,2) }}</span> Birr<br>
+												  <strong>Total: <span id="total-price">{{ number_format($after_discount,2) }}</span> Birr</strong>
+												</p> --}}
+
+
+                                               <p class="price">
+  <span id="discounted-price" class="discount">{{number_format($after_discount,2)}}</span>
+  <s id="original-price">{{number_format($product_detail->price,2)}} Birr</s>
+</p>
+												{{-- Attribute dropdowns --}}
+						{{-- Attribute dropdowns - CORRECTED --}}
 @foreach($product_detail->attributes as $attr)
-  <div style="margin-bottom: 1rem;">
-    <label
-      for="attr-{{ $attr->id }}"
-      style="display: block; margin-bottom: .5rem; font-weight: 600;"
-    >
+  <div class="form-group" style="margin-top:1rem;">
+    <label for="attr-{{ $attr->id }}" style="font-weight:600;">
       {{ $attr->name }}
     </label>
     <select
       id="attr-{{ $attr->id }}"
       name="attributes[{{ $attr->id }}]"
-      style="
-        width: 100%;
-        max-width: 300px;
-        padding: .5rem;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        background: #fff;
-      "
+      class="form-control attribute-select"
+      style="max-width:300px;"
+      data-attr-id="{{ $attr->id }}"
     >
-      <option value="">-- Select {{ $attr->name }} --</option>
+      <option value="" data-price="0">
+        -- Select {{ $attr->name }} --
+      </option>
       @foreach($attr->values as $val)
-        <option value="{{ $val->id }}">
-          {{ $val->value }}
+        <option
+          value="{{ $val->id }}"
+          data-price="{{ number_format($val->price, 2, '.', '') }}"
+        >
+          {{ $val->value }} @if($val->price > 0)(+{{ number_format($val->price,2) }} Birr)@endif
         </option>
       @endforeach
     </select>
   </div>
 @endforeach
-
-
-
-											<div class="product-buy">
-												<form action="{{route('single-add-to-cart')}}" method="POST">
-													@csrf
-													<div class="quantity">
-														<h6>Quantity :</h6>
-														<!-- Input Order -->
-														<div class="input-group">
-															<div class="button minus">
-																<button type="button" class="btn btn-primary btn-number" disabled="disabled" data-type="minus" data-field="quant[1]">
-																	<i class="ti-minus"></i>
-																</button>
+												<div class="product-buy">
+													<form action="{{route('single-add-to-cart')}}" method="POST">
+														@csrf
+														<div class="quantity">
+															<h6>Quantity :</h6>
+															<!-- Input Order -->
+															<div class="input-group">
+																<div class="button minus">
+																	<button type="button" class="btn btn-primary btn-number" disabled="disabled" data-type="minus" data-field="quant[1]">
+																		<i class="ti-minus"></i>
+																	</button>
+																</div>
+																<input type="hidden" name="slug" value="{{$product_detail->slug}}">
+																<input type="text" name="quant[1]" class="input-number"  data-min="1" data-max="1000" value="1" id="quantity">
+																<div class="button plus">
+																	<button type="button" class="btn btn-primary btn-number" data-type="plus" data-field="quant[1]">
+																		<i class="ti-plus"></i>
+																	</button>
+																</div>
 															</div>
-															<input type="hidden" name="slug" value="{{$product_detail->slug}}">
-															<input type="text" name="quant[1]" class="input-number"  data-min="1" data-max="1000" value="1" id="quantity">
-															<div class="button plus">
-																<button type="button" class="btn btn-primary btn-number" data-type="plus" data-field="quant[1]">
-																	<i class="ti-plus"></i>
-																</button>
-															</div>
+														<!--/ End Input Order -->
 														</div>
-													<!--/ End Input Order -->
-													</div>
-													<div class="add-to-cart mt-4">
-														<button type="submit" class="btn">Add to cart</button>
-														<a href="{{route('add-to-wishlist',$product_detail->slug)}}" class="btn min"><i class="ti-heart"></i></a>
-													</div>
-												</form>
+														<div class="add-to-cart mt-4">
+															<button type="submit" class="btn">Add to cart</button>
+															<a href="{{route('add-to-wishlist',$product_detail->slug)}}" class="btn min"><i class="ti-heart"></i></a>
+														</div>
+													</form>
 
-												<p class="cat">Category :<a href="{{route('product-cat',$product_detail->cat_info['slug'])}}">{{$product_detail->cat_info['title']}}</a></p>
-												@if($product_detail->sub_cat_info)
-												<p class="cat mt-1">Sub Category :<a href="{{route('product-sub-cat',[$product_detail->cat_info['slug'],$product_detail->sub_cat_info['slug']])}}">{{$product_detail->sub_cat_info['title']}}</a></p>
-												@endif
-												<p class="availability">Stock : @if($product_detail->stock>0)<span class="badge badge-success">{{$product_detail->stock}}</span>@else <span class="badge badge-danger">{{$product_detail->stock}}</span>  @endif</p>
+													<p class="cat">Category :<a href="{{route('product-cat',$product_detail->cat_info['slug'])}}">{{$product_detail->cat_info['title']}}</a></p>
+													@if($product_detail->sub_cat_info)
+													<p class="cat mt-1">Sub Category :<a href="{{route('product-sub-cat',[$product_detail->cat_info['slug'],$product_detail->sub_cat_info['slug']])}}">{{$product_detail->sub_cat_info['title']}}</a></p>
+													@endif
+													<p class="availability">Stock : @if($product_detail->stock>0)<span class="badge badge-success">{{$product_detail->stock}}</span>@else <span class="badge badge-danger">{{$product_detail->stock}}</span>  @endif</p>
+												</div>
+												<!--/ End Product Buy -->
 											</div>
-											<!--/ End Product Buy -->
 										</div>
 									</div>
 								</div>
@@ -564,37 +541,55 @@
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 
-    {{-- <script>
-        $('.cart').click(function(){
-            var quantity=$('#quantity').val();
-            var pro_id=$(this).data('id');
-            // alert(quantity);
-            $.ajax({
-                url:"{{route('add-to-cart')}}",
-                type:"POST",
-                data:{
-                    _token:"{{csrf_token()}}",
-                    quantity:quantity,
-                    pro_id:pro_id
-                },
-                success:function(response){
-                    console.log(response);
-					if(typeof(response)!='object'){
-						response=$.parseJSON(response);
-					}
-					if(response.status){
-						swal('success',response.msg,'success').then(function(){
-							document.location.href=document.location.href;
-						});
-					}
-					else{
-                        swal('error',response.msg,'error').then(function(){
-							document.location.href=document.location.href;
-						});
-                    }
-                }
-            })
+<script>
+// jQuery version with new price design
+$(document).ready(function() {
+    console.log('jQuery price updater initializing...');
+
+    var originalBase = {{ $base }};
+    var discountPercentage = {{ $discount }};
+
+    console.log('Original base:', originalBase, 'Discount:', discountPercentage);
+
+    function updatePrices() {
+        console.log('Updating prices with jQuery...');
+
+        var totalAdditionalPrice = 0;
+
+        $('.attribute-select').each(function() {
+            var selectedValue = $(this).val();
+            console.log('Select ID:', $(this).attr('id'), 'Value:', selectedValue);
+
+            if (selectedValue !== '') {
+                var selectedOption = $(this).find('option:selected');
+                var price = parseFloat(selectedOption.data('price')) || 0;
+                totalAdditionalPrice += price;
+                console.log('Added price:', price);
+            }
         });
-    </script> --}}
+
+        console.log('Total additional price:', totalAdditionalPrice);
+
+        // Calculate new prices
+        var newBase = originalBase + totalAdditionalPrice;
+        var newDiscounted = newBase - (newBase * discountPercentage / 100);
+
+        // Update the price display with new design
+        $('#discounted-price').text(newDiscounted.toFixed(2));
+        $('#original-price').text(newBase.toFixed(2) + ' Birr');
+
+        console.log('Updated - Base:', newBase, 'Discounted:', newDiscounted);
+    }
+
+    // Attach change event
+    $(document).on('change', '.attribute-select', function() {
+        console.log('Attribute changed:', $(this).attr('id'));
+        updatePrices();
+    });
+
+    // Initial update
+    updatePrices();
+});
+</script>
 
 @endpush
