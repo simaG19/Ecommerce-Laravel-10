@@ -9,7 +9,7 @@ class AttributeValue extends Model
     // allow mass‑assignment on these columns:
     protected $fillable = [
         'product_attribute_id',
-        'value',
+        'value','price'
     ];
 
     /**
