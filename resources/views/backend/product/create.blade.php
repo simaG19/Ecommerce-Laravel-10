@@ -60,85 +60,121 @@
 
 
 
-  <div id="attributes-wrapper">
-    @if(old('attributes'))
-      @foreach(old('attributes') as $i => $attr)
-        <div class="attribute-block" data-index="{{ $i }}">
+<div id="attributes-wrapper">
+  @if(old('attributes'))
+    @foreach(old('attributes') as $i => $attr)
+      <div class="attribute-block" data-index="{{ $i }}">
+        <input
+          type="text"
+          name="attributes[{{ $i }}][name]"
+          value="{{ $attr['name'] }}"
+          placeholder="Attribute name (e.g. Color)"
+          required
+        >
+        <div class="values-wrapper">
+          @foreach($attr['values'] as $j => $value)
+            <div>
+              <input
+                type="text"
+                name="attributes[{{ $i }}][values][{{ $j }}][label]"
+                value="{{ $value['label'] }}"
+                placeholder="Value label"
+                required
+              >
+              <input
+                type="number"
+                name="attributes[{{ $i }}][values][{{ $j }}][price]"
+                value="{{ $value['price'] }}"
+                step="0.01"
+                placeholder="Price"
+                required
+              >
+              <button type="button" class="remove-value">×</button>
+            </div>
+          @endforeach
+        </div>
+        <button type="button" class="add-value">Add Value</button>
+        <button type="button" class="remove-attribute">Remove Attribute</button>
+      </div>
+    @endforeach
+  @endif
+</div>
+
+<button type="button" id="add-attribute">Add Attribute</button>
+<script>
+  let attrIndex = {{ old('attributes') ? count(old('attributes')) : 0 }};
+
+  document.getElementById('add-attribute').addEventListener('click', () => {
+    const i = attrIndex++;
+    const wrapper = document.getElementById('attributes-wrapper');
+    const block = document.createElement('div');
+    block.classList.add('attribute-block');
+    block.dataset.index = i;
+    block.innerHTML = `
+      <input
+        type="text"
+        name="attributes[${i}][name]"
+        placeholder="Attribute name (e.g. Color)"
+        required
+      >
+      <div class="values-wrapper">
+        <div>
           <input
             type="text"
-            name="attributes[{{ $i }}][name]"
-            value="{{ $attr['name'] }}"
-            placeholder="Attribute name (e.g. Color)"
-            required>
-
-          <div class="values-wrapper">
-            @foreach($attr['values'] as $j => $val)
-              <div>
-                <input
-                  type="text"
-                  name="attributes[{{ $i }}][values][]"
-                  value="{{ $val }}"
-                  placeholder="Value (e.g. Red)"
-                  required>
-                <button type="button" class="remove-value">×</button>
-              </div>
-            @endforeach
-          </div>
-
-          <button type="button" class="add-value">Add Value</button>
-          <button type="button" class="remove-attribute">Remove Attribute</button>
+            name="attributes[${i}][values][0][label]"
+            placeholder="Value label"
+            required
+          >
+          <input
+            type="number"
+            name="attributes[${i}][values][0][price]"
+            step="0.01"
+            placeholder="Price"
+            required
+          >
+          <button type="button" class="remove-value">×</button>
         </div>
-      @endforeach
-    @endif
-  </div>
-
-  <button type="button" id="add-attribute">Add Attribute</button>
-
-
- <script>
-let attrIndex = {{ old('attributes') ? count(old('attributes')) : 0 }};
-
-document.getElementById('add-attribute').addEventListener('click', () => {
-  const i = attrIndex++;
-  const block = document.createElement('div');
-  block.classList.add('attribute-block');
-  block.setAttribute('data-index', i);
-  block.innerHTML = `
-    <input type="text" name="attributes[${i}][name]" placeholder="Attribute name" required>
-    <div class="values-wrapper">
-      <div>
-        <input type="text" name="attributes[${i}][values][]" placeholder="Value" required>
-        <button type="button" class="remove-value">×</button>
       </div>
-    </div>
-    <button type="button" class="add-value">Add Value</button>
-    <button type="button" class="remove-attribute">Remove Attribute</button>
-  `;
-  document.getElementById('attributes-wrapper').append(block);
-});
+      <button type="button" class="add-value">Add Value</button>
+      <button type="button" class="remove-attribute">Remove Attribute</button>
+    `;
+    wrapper.append(block);
+  });
 
-// Delegate remove/add value & remove attribute:
-document.getElementById('attributes-wrapper').addEventListener('click', e => {
-  if (e.target.matches('.add-value')) {
-    const wrapper = e.target.closest('.attribute-block')
-                       .querySelector('.values-wrapper');
-    wrapper.insertAdjacentHTML('beforeend', `
-      <div>
-        <input type="text" name="attributes[${
-          e.target.closest('.attribute-block').dataset.index
-        }][values][]" placeholder="Value" required>
-        <button type="button" class="remove-value">×</button>
-      </div>
-    `);
-  }
-  if (e.target.matches('.remove-value')) {
-    e.target.closest('div').remove();
-  }
-  if (e.target.matches('.remove-attribute')) {
-    e.target.closest('.attribute-block').remove();
-  }
-});
+  document.getElementById('attributes-wrapper').addEventListener('click', e => {
+    if (e.target.matches('.add-value')) {
+      const block = e.target.closest('.attribute-block');
+      const i = block.dataset.index;
+      const valuesWrapper = block.querySelector('.values-wrapper');
+      const j = valuesWrapper.children.length;
+      valuesWrapper.insertAdjacentHTML('beforeend', `
+        <div>
+          <input
+            type="text"
+            name="attributes[${i}][values][${j}][label]"
+            placeholder="Value label"
+            required
+          >
+          <input
+            type="number"
+            name="attributes[${i}][values][${j}][price]"
+            step="0.01"
+            placeholder="Price"
+            required
+          >
+          <button type="button" class="remove-value">×</button>
+        </div>
+      `);
+    }
+    if (e.target.matches('.remove-value')) {
+      e.target.closest('div').remove();
+    }
+    if (e.target.matches('.remove-attribute')) {
+      e.target.closest('.attribute-block').remove();
+    }
+  });
 </script>
+
 
         <div class="form-group">
           <label for="price" class="col-form-label">Price(ETB) <span class="text-danger">*</span></label>
