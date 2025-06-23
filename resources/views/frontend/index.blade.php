@@ -2,179 +2,416 @@
 @section('title','E-SHOP || HOME PAGE')
 @section('main-content')
 <!-- Slider Area -->
-@if(count($banners)>0)
-    <section id="Gslider" class="carousel slide" data-ride="carousel">
-        <ol class="carousel-indicators">
-            @foreach($banners as $key=>$banner)
-        <li data-target="#Gslider" data-slide-to="{{$key}}" class="{{(($key==0)? 'active' : '')}}"></li>
-            @endforeach
 
-        </ol>
-        <div class="carousel-inner" role="listbox">
-                @foreach($banners as $key=>$banner)
-                <div class="carousel-item {{(($key==0)? 'active' : '')}}">
-                    <img class="first-slide" src="{{$banner->photo}}" alt="First slide">
-                    <div class="carousel-caption d-none d-md-block text-left">
-                        <h1 class="wow fadeInDown">{{$banner->title}}</h1>
-                        <p>{!! html_entity_decode($banner->description) !!}</p>
-                        <a class="btn btn-lg ws-btn wow fadeInUpBig" href="{{route('product-grids')}}" role="button">Shop Now<i class="far fa-arrow-alt-circle-right"></i></i></a>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<!-- Modern Electrical Equipment Slider -->
+<div class="hero-slider">
+    <div class="slider-container">
+        <!-- Slide 1 -->
+        <div class="slide active">
+            <div class="slide-bg" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="slide-content">
+                    <div class="content-left">
+                        <span class="category">ELECTRICAL CABLES</span>
+                        <h1>Premium Copper Cables</h1>
+                        <p>High-quality electrical cables for residential and commercial use. Durable, safe, and certified.</p>
+                        <div class="slide-actions">
+                            <a href="#" class="btn-primary">Shop Now</a>
+                            <span class="price">Starting from 250</span>
+                        </div>
+                    </div>
+                    <div class="content-right">
+                        <img src="/placeholder.svg?height=300&width=400" alt="Electrical Cables" class="product-image">
                     </div>
                 </div>
-            @endforeach
+            </div>
         </div>
-        <a class="carousel-control-prev" href="#Gslider" role="button" data-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#Gslider" role="button" data-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="sr-only">Next</span>
-        </a>
-    </section>
 
-    <!-- Fix for dark space -->
-    <style>
-    /* Fix carousel height issues on all devices */
-    #Gslider {
-        height: auto !important;
-        min-height: auto !important;
-        margin-bottom: 0;
+        <!-- Slide 2 -->
+        <div class="slide">
+            <div class="slide-bg" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <div class="slide-content">
+                    <div class="content-left">
+                        <span class="category">LIGHTING SOLUTIONS</span>
+                        <h1>LED Light Fixtures</h1>
+                        <p>Energy-efficient LED lighting solutions for homes and offices. Modern designs with long-lasting performance.</p>
+                        <div class="slide-actions">
+                            <a href="#" class="btn-primary">Explore</a>
+                            <span class="price">From 450</span>
+                        </div>
+                    </div>
+                    <div class="content-right">
+                        <img src="/placeholder.svg?height=300&width=400" alt="LED Lights" class="product-image">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 3 -->
+        <div class="slide">
+            <div class="slide-bg" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                <div class="slide-content">
+                    <div class="content-left">
+                        <span class="category">POWER TOOLS</span>
+                        <h1>Professional Tools</h1>
+                        <p>Complete range of electrical tools and equipment for professionals and DIY enthusiasts.</p>
+                        <div class="slide-actions">
+                            <a href="#" class="btn-primary">View Tools</a>
+                            <span class="price">From 450</span>
+                        </div>
+                    </div>
+                    <div class="content-right">
+                        <img src="/placeholder.svg?height=300&width=400" alt="Power Tools" class="product-image">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="slider-nav">
+        <button class="nav-btn prev" onclick="changeSlide(-1)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </button>
+        <button class="nav-btn next" onclick="changeSlide(1)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Dots Indicator -->
+    <div class="slider-dots">
+        <span class="dot active" onclick="currentSlide(1)"></span>
+        <span class="dot" onclick="currentSlide(2)"></span>
+        <span class="dot" onclick="currentSlide(3)"></span>
+    </div>
+</div>
+
+<style>
+/* Hero Slider Styles */
+.hero-slider {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    overflow: hidden;
+    border-radius: 0;
+}
+
+.slider-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.6s ease-in-out;
+}
+
+.slide.active {
+    opacity: 1;
+}
+
+.slide-bg {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    padding: 0 5%;
+}
+
+.slide-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.content-left {
+    flex: 1;
+    color: white;
+    padding-right: 40px;
+}
+
+.category {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+}
+
+.content-left h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.content-left p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    opacity: 0.9;
+    line-height: 1.6;
+}
+
+.slide-actions {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.btn-primary {
+    background: white;
+    color: #333;
+    padding: 15px 30px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.price {
+    font-size: 1.1rem;
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+.content-right {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.product-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* Navigation */
+.slider-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    pointer-events: none;
+}
+
+.nav-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    pointer-events: all;
+}
+
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+/* Dots */
+.slider-dots {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 15px;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dot.active {
+    background: white;
+    transform: scale(1.2);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .hero-slider {
+        height: 400px;
     }
 
-    #Gslider .carousel-inner {
-        height: auto !important;
-        min-height: auto !important;
+    .slide-content {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
     }
 
-    #Gslider .carousel-item {
-        height: auto !important;
-        min-height: auto !important;
-        display: block;
+    .content-left {
+        padding-right: 0;
+        margin-bottom: 30px;
     }
 
-    #Gslider .carousel-item img {
-        width: 100%;
-        height: auto;
-        display: block;
-        max-width: 100%;
+    .content-left h1 {
+        font-size: 2rem;
+        margin-bottom: 15px;
     }
 
-    /* Mobile-only modifications - Desktop remains original */
-    @media (max-width: 767px) {
-        /* Force carousel to fit content on mobile */
-        #Gslider {
-            height: auto !important;
-            min-height: auto !important;
-            max-height: none !important;
-        }
-
-        #Gslider .carousel-inner {
-            height: auto !important;
-            min-height: auto !important;
-            max-height: none !important;
-        }
-
-        #Gslider .carousel-item {
-            height: auto !important;
-            min-height: auto !important;
-            max-height: none !important;
-        }
-
-        /* Make images responsive on mobile */
-        #Gslider .carousel-item img {
-            width: 100%;
-            height: auto !important;
-            max-height: 250px;
-            min-height: auto !important;
-            object-fit: cover;
-        }
-
-        /* Show caption on mobile with proper styling */
-        #Gslider .carousel-caption {
-            display: block !important;
-            position: absolute;
-            bottom: 20px;
-            left: 15px;
-            right: 15px;
-            background: rgba(0,0,0,0.7);
-            padding: 15px;
-            border-radius: 8px;
-            color: white;
-        }
-
-        /* Mobile text sizes */
-        #Gslider .carousel-caption h1 {
-            font-size: 1.4rem;
-            margin-bottom: 8px;
-            line-height: 1.2;
-        }
-
-        #Gslider .carousel-caption p {
-            font-size: 0.9rem;
-            margin-bottom: 12px;
-            line-height: 1.3;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        /* Mobile button */
-        #Gslider .carousel-caption .btn {
-            padding: 8px 16px;
-            font-size: 0.9rem;
-        }
-
-        /* Mobile carousel controls */
-        #Gslider .carousel-control-prev,
-        #Gslider .carousel-control-next {
-            width: 40px;
-            height: 40px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(0,0,0,0.5);
-            border-radius: 50%;
-        }
-
-        #Gslider .carousel-control-prev {
-            left: 10px;
-        }
-
-        #Gslider .carousel-control-next {
-            right: 10px;
-        }
-
-        #Gslider .carousel-control-prev-icon,
-        #Gslider .carousel-control-next-icon {
-            width: 20px;
-            height: 20px;
-        }
-
-        /* Mobile indicators */
-        #Gslider .carousel-indicators {
-            bottom: 10px;
-            position: absolute;
-            margin-bottom: 0;
-        }
-
-        #Gslider .carousel-indicators li {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin: 0 4px;
-        }
+    .content-left p {
+        font-size: 1rem;
+        margin-bottom: 20px;
     }
 
-    /* Override any existing carousel CSS that might be causing height issues */
-    .carousel-item::after {
-        display: none !important;
+    .slide-actions {
+        flex-direction: column;
+        gap: 15px;
     }
 
-    .carousel::after {
-        display: none !important;
+    .btn-primary {
+        padding: 12px 25px;
+        font-size: 1rem;
     }
-    </style>
-@endif
+
+    .product-image {
+        max-width: 250px;
+    }
+
+    .nav-btn {
+        width: 40px;
+        height: 40px;
+    }
+
+    .slider-nav {
+        padding: 0 15px;
+    }
+
+    .slider-dots {
+        bottom: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-slider {
+        height: 350px;
+    }
+
+    .content-left h1 {
+        font-size: 1.6rem;
+    }
+
+    .content-left p {
+        font-size: 0.9rem;
+    }
+
+    .product-image {
+        max-width: 200px;
+    }
+}
+</style>
+
+<script>
+let currentSlideIndex = 0;
+const slides = document.querySelectorAll('.slide');
+const dots = document.querySelectorAll('.dot');
+
+function showSlide(index) {
+    // Hide all slides
+    slides.forEach(slide => slide.classList.remove('active'));
+    dots.forEach(dot => dot.classList.remove('active'));
+
+    // Show current slide
+    slides[index].classList.add('active');
+    dots[index].classList.add('active');
+}
+
+function changeSlide(direction) {
+    currentSlideIndex += direction;
+
+    if (currentSlideIndex >= slides.length) {
+        currentSlideIndex = 0;
+    } else if (currentSlideIndex < 0) {
+        currentSlideIndex = slides.length - 1;
+    }
+
+    showSlide(currentSlideIndex);
+}
+
+function currentSlide(index) {
+    currentSlideIndex = index - 1;
+    showSlide(currentSlideIndex);
+}
+
+// Auto-play slider
+setInterval(() => {
+    changeSlide(1);
+}, 5000);
+
+// Touch/swipe support for mobile
+let startX = 0;
+let endX = 0;
+
+document.querySelector('.hero-slider').addEventListener('touchstart', (e) => {
+    startX = e.touches[0].clientX;
+});
+
+document.querySelector('.hero-slider').addEventListener('touchend', (e) => {
+    endX = e.changedTouches[0].clientX;
+    handleSwipe();
+});
+
+function handleSwipe() {
+    const swipeThreshold = 50;
+    const diff = startX - endX;
+
+    if (Math.abs(diff) > swipeThreshold) {
+        if (diff > 0) {
+            changeSlide(1); // Swipe left - next slide
+        } else {
+            changeSlide(-1); // Swipe right - previous slide
+        }
+    }
+}
+</script>
+
+</body>
+</html>
 <!--/ End Slider Area -->
 
 <!-- Start Small Banner  -->
