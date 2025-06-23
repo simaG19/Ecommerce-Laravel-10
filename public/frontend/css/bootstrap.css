@@ -661,7 +661,7 @@ pre code {
 }
 
 .pre-scrollable {
-    max-height: 340px;
+    max-height: 334px ;
     overflow-y: scroll
 }
 
@@ -675,7 +675,7 @@ pre code {
 
 @media (min-width:576px) {
     .container {
-        max-width: 540px
+        max-width: 534px
     }
 }
 
@@ -693,7 +693,7 @@ pre code {
 
 @media (min-width:1200px) {
     .container {
-        max-width: 1140px
+        max-width: 1134px
     }
 }
 

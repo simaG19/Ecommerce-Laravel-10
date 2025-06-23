@@ -27,7 +27,7 @@ Version:1.0
 15. Newslatter CSS
 16. About Us CSS
 17. Team CSS
-18. Blog CSS	
+18. Blog CSS
 	+ Blog Archive
 	+ Blog Sidebar
 	+ Blog Single
@@ -204,9 +204,9 @@ Version:1.0
 	text-align: center;
 }
 #scrollUp i{
-	height: 40px;
-    width: 40px;
-    line-height: 40px;
+	height: 34px ;
+    width: 34px ;
+    line-height: 34px ;
 	background:transparent;
     background:#222;
     border-radius: 0;
@@ -379,7 +379,7 @@ Version:1.0
 }
 /* Topbar Left Nav */
 .header.shop .left-nav{
-	
+
 }
 .header.shop .top-left .list-main li:first-child{
 	padding-left:0;
@@ -422,7 +422,7 @@ Version:1.0
 	color:#F7941D;
 }
 .header.shop .nav li {
-	margin-right: 40px;
+	margin-right: 34px ;
 	float: left;
 	position: relative;
 }
@@ -546,7 +546,7 @@ Version:1.0
 	width: 70px;
 	height: 70px;
 	border-radius:0;
-	
+
 }
 .header .shopping-list .cart-img:hover img{
 	transform:scale(1.09);
@@ -637,7 +637,7 @@ Version:1.0
 .header.shop .search-bar {
 	margin-top: 33px;
 	width: 460px;
-	height: 40px;
+	height: 34px ;
 	display: inline-block;
 	background: #fff;
 	position: relative;
@@ -914,7 +914,7 @@ Version:1.0
 	float: right;
 }
 .header.shop .nav li {
-	margin-right: 40px;
+	margin-right: 34px ;
 	float: left;
 	position: relative;
 }
@@ -1144,7 +1144,7 @@ Version:1.0
 .header.sticky .all-category{}
 .header.sticky .all-category h3{
 	cursor:pointer;
-	
+
 }
 .header.sticky .all-category .main-category{
 	opacity:0;
@@ -1207,7 +1207,7 @@ Version:1.0
 
 /*======================================
    Hero Area CSS
-========================================*/ 
+========================================*/
 .hero-slider {
 	background: #fff;
 	overflow: hidden;
@@ -1221,7 +1221,7 @@ Version:1.0
     height: 510px;
 }
 .hero-slider .text-inner {
-	
+
 }
 .hero-slider .hero-text {
 	padding: 0 30px;
@@ -1345,7 +1345,7 @@ Version:1.0
 }
 .hero-area2 .owl-carousel .owl-nav div {
 	height: 60px;
-	width: 40px;
+	width: 34px ;
 	line-height: 60px;
 	text-align: center;
 	background: #333;
@@ -1399,7 +1399,7 @@ Version:1.0
 }
 .hero-area3 .big-content .des{}
 .hero-area3 .big-content .button{
-	margin-top:40px;
+	margin-top:34px ;
 	display:block;
 }
 .hero-area3 .big-content .button .btn{
@@ -1407,7 +1407,7 @@ Version:1.0
 }
 
 .hero-area3 .small-content{
-	height:240px;
+	height:234px ;
 	background-size: cover;
 	background-position: center;
 	background-repeat: no-repeat;
@@ -1454,7 +1454,7 @@ Version:1.0
 }
 /* Hero Area 4 */
 .hero-area4 .big-content{
-	
+
 	background-size: cover;
 	background-position: center;
 	background-repeat: no-repeat;
@@ -1481,7 +1481,7 @@ Version:1.0
 }
 .hero-area4 .big-content .des{}
 .hero-area4 .big-content .button{
-	margin-top:40px;
+	margin-top:34px ;
 	display:block;
 }
 .hero-area4 .big-content .button .btn{
@@ -1495,9 +1495,9 @@ Version:1.0
 	margin-top:-20px;
 }
 .hero-area4 .owl-carousel .owl-nav div {
-	height: 40px;
-	width: 40px;
-	line-height: 40px;
+	height: 34px ;
+	width: 34px ;
+	line-height: 34px ;
 	text-align: center;
 	background: #333;
 	color: #fff;
@@ -1523,11 +1523,11 @@ Version:1.0
 
 /*======================================
    End Hero Area CSS
-========================================*/ 
+========================================*/
 
 /*======================================
    Start Small Banner CSS
-========================================*/ 
+========================================*/
 .small-banner{
 	padding:30px 0;
 	padding-bottom:0;
@@ -1582,11 +1582,11 @@ Version:1.0
 }
 /*======================================
    End Small Banner CSS
-========================================*/ 
+========================================*/
 
 /*======================================
    Start Mid Banner CSS
-========================================*/ 
+========================================*/
 .midium-banner{
 	padding:0;
 }
@@ -1648,7 +1648,7 @@ Version:1.0
 }
 /*======================================
    End Mid Banner CSS
-========================================*/ 
+========================================*/
 
 /*======================================
    Start Most Popular CSS
@@ -1658,11 +1658,11 @@ Version:1.0
 	text-align: center;
 }
 .most-popular .section-title{
-	margin-bottom:40px;
+	margin-bottom:34px ;
 }
 .pro-tab-viewmore-wrap .pro-viewmore {
   position: absolute;
-  right: 40px;
+  right: 34px ;
   top: 0;
 }
 .most-popular .single-product{
@@ -1734,7 +1734,7 @@ Version:1.0
 }
 .product-area .nav-tabs li:last-child a{
 	border-color:transparent;
-} 
+}
 .product-area .nav-tabs li a i{
 	margin-right:10px;
 }
@@ -1861,7 +1861,7 @@ Version:1.0
 	border:none;
 }
 .single-product .product-img .product-action a i {
-  line-height: 40px;
+  line-height: 34px ;
 }
 .single-product .product-img .product-action a span {
 	visibility: hidden;
@@ -1943,7 +1943,7 @@ Version:1.0
 .single-product .button-head {
 	background: #fff;
 	display: inline-block;
-	height: 40px;
+	height: 34px ;
 	width: 100%;
 	position: absolute;
 	left: 0;
@@ -2142,7 +2142,7 @@ Version:1.0
 	margin-top: 10px;
 }
 .shop-sidebar .categor-list li{
-	
+
 }
 .shop-sidebar .categor-list li {
 	margin-bottom: 10px;
@@ -2388,7 +2388,7 @@ Version:1.0
 	color:#F7941D;
 }
 .shop.single .product-des .product-buy {
-	margin-top: 40px;
+	margin-top: 34px ;
 }
 .shop.single .product-des .product-buy{}
 .shop.single .product-des .color {
@@ -2613,7 +2613,7 @@ Version:1.0
 	border-color:transparent;
 }
 .shop.single .tab-single {
-	
+
 }
 .shop.single .single-des {
 	margin-top:35px;
@@ -2622,7 +2622,7 @@ Version:1.0
 	margin-bottom:15px;
 	font-weight:500;
 	font-size:22px;
-	
+
 }
 .shop.single .single-des ul{}
 .shop.single .single-des ul li {
@@ -2860,9 +2860,9 @@ Version:1.0
 	visibility:visible;
 }
 .shop-home-list .single-list .list-image .buy{
-	height:40px;
-	width:40px;
-	line-height:40px;
+	height:34px ;
+	width:34px ;
+	line-height:34px ;
 	font-size:14px;
 	color:#fff;
 	background:#F7941D;
@@ -2991,7 +2991,7 @@ Version:1.0
 	transform:rotate(360deg);
 }
 .shopping-cart .border{
-	
+
 }
 .shopping-cart .table .remove-icon{
 	font-size:16px;
@@ -3148,7 +3148,7 @@ Version:1.0
 	padding-left: 100px;
 }
 .shopping-cart .total-amount .right ul{
-	
+
 }
 .shopping-cart .total-amount .right ul li {
 	font-size: 15px;
@@ -3234,7 +3234,7 @@ Version:1.0
 	background: #F6F7FB;
 }
 .shop.checkout .form .form-group input:hover{
-	
+
 }
 .shop.checkout .nice-select {
 	width: 100%;
@@ -3670,10 +3670,10 @@ Version:1.0
 .cown-down .content .cdown {
 	float: none;
 	text-align:center;
-	margin-top:40px;
+	margin-top:34px ;
 	width: 80px;
 	display:inline-block;
-	
+
 }
 .cown-down .content .cdown {
 	text-align: center;
@@ -3861,7 +3861,7 @@ Version:1.0
 	margin:0;
 }
 .about-us .about-content .button{
-	margin-top:40px;
+	margin-top:34px ;
 }
 .about-us .about-content .button .btn{
 	background:#333;
@@ -3932,7 +3932,7 @@ Version:1.0
 .about-us .about-img img{
 	height:100%;
 	width:100%;
-	
+
 }
 /*=============================
 	End About US CSS
@@ -3940,12 +3940,12 @@ Version:1.0
 
 /*======================================
   10. Start Team CSS
-========================================*/  
+========================================*/
 .team{
 	background:#F6F7FB;
 }
 .team .title-line{
-	margin-bottom:40px;
+	margin-bottom:34px ;
 }
 .team .single-team {
 	margin-top: 30px;
@@ -4003,7 +4003,7 @@ Version:1.0
 }
 /*======================================
   End Team CSS
-========================================*/ 
+========================================*/
 
 /*======================================
    Start Shop Blog CSS
@@ -4025,7 +4025,7 @@ Version:1.0
 	width:100%;
 }
 .shop-blog .shop-single-blog .content {
-	padding: 40px;
+	padding: 34px ;
 }
 .shop-blog .shop-single-blog .content .title {
 	font-size: 17px;
@@ -4073,7 +4073,7 @@ Version:1.0
 .main-sidebar {
 	background: #fff;
 	margin-top: 30px;
-	padding: 40px;
+	padding: 34px ;
 	background: transparent;
 	border: 1px solid #eeeeeec2;
 }
@@ -4148,7 +4148,7 @@ Version:1.0
 	margin-top: 15px;
 }
 .main-sidebar .categor-list li{
-	
+
 }
 .main-sidebar .categor-list li {
 	margin-bottom: 10px;
@@ -4194,7 +4194,7 @@ Version:1.0
 	border:none;
 }
 .main-sidebar .single-post .image {
-	
+
 }
 .main-sidebar .single-post .image img{
 	float: left;
@@ -4239,7 +4239,7 @@ Version:1.0
 /* Blog Tags */
 .main-sidebar .side-tags{}
 .main-sidebar .side-tags .tag{
-	margin-top:40px;
+	margin-top:34px ;
 }
 .main-sidebar .side-tags .tag li {
 	display: inline-block;
@@ -4262,7 +4262,7 @@ Version:1.0
 }
 /* Blog Newslatter CSS */
 .main-sidebar .newsletter{
-	
+
 }
 .main-sidebar .newsletter .letter-inner {
 	position:relative;
@@ -4335,7 +4335,7 @@ Version:1.0
 	font-size: 24px;
 	font-weight: 600;
 	text-transform: capitalize;
-	margin: 40px 0 15px 0;
+	margin: 34px  0 15px 0;
 }
 .blog-single .blog-meta {
 	margin-bottom: 0;
@@ -4387,7 +4387,7 @@ Version:1.0
 	padding-left: 20px;
 	padding: 10px 20px;
 	background: #F6F6F6;
-	padding: 30px 40px 30px 70px;
+	padding: 30px 34px  30px 70px;
 	color: #555;
 	border: none;
 	margin-bottom: 25px;
@@ -4439,7 +4439,7 @@ Version:1.0
 }
 /* Comments */
 .blog-single .comments{
-	margin-top:40px;
+	margin-top:34px ;
 }
 .blog-single .comments .comment-title {
 	position: relative;
@@ -4461,11 +4461,11 @@ Version:1.0
 	background:#F7941D;
 }
 .blog-single .comments{
-	
+
 }
 .blog-single .comments .single-comment {
 	position: relative;
-	margin-bottom: 40px;
+	margin-bottom: 34px ;
 	border-radius: 5px;
 	padding-left: 95px;
 }
@@ -4480,7 +4480,7 @@ Version:1.0
 	left: 0;
 }
 .blog-single .single-comment .content {
-	
+
 }
 .blog-single .single-comment .content h4 {
 	color: #333;
@@ -4530,7 +4530,7 @@ Version:1.0
 }
 /* Comment Form */
 .blog-single .reply form {
-	padding: 40px;
+	padding: 34px ;
 	border: 1px solid #eee;
 }
 .blog-single .reply .reply-title {
@@ -4635,12 +4635,12 @@ Version:1.0
 	font-size: 18px;
 	display: inline-block;
 	margin-bottom: 15px;
-	height: 40px;
-	width: 40px;
+	height: 34px ;
+	width: 34px ;
 	display: block;
 	text-align: center;
 	border-radius: 3px;
-	line-height: 40px;
+	line-height: 34px ;
 	background:#F7941D;
 }
 .contact-us .single-info ul
@@ -4890,7 +4890,7 @@ Version:1.0
 }
 /* Copyright */
 .footer .copyright{
-	
+
 }
 .footer .copyright .inner{
 	border-top:1px solid #eeeeee3d;

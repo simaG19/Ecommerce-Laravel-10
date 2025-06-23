@@ -219,7 +219,7 @@
 			position: absolute;
 			left: 20px;
 			top: 0;
-			line-height: 40px;
+			line-height: 34px ;
 			z-index: 3;
 		}
 		.form-select {
@@ -229,10 +229,10 @@
 		.form-select .nice-select {
 			border: none;
 			border-radius: 0px;
-			height: 40px;
+			height: 34px ;
 			background: #f6f6f6 !important;
 			padding-left: 45px;
-			padding-right: 40px;
+			padding-right: 34px ;
 			width: 100%;
 		}
 		.list li{

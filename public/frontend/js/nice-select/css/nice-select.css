@@ -12,7 +12,7 @@
   font-size: 14px;
   font-weight: normal;
   height: 42px;
-  line-height: 40px;
+  line-height: 34px ;
   outline: none;
   padding-left: 18px;
   padding-right: 30px;
@@ -113,9 +113,9 @@
   .nice-select .option {
     cursor: pointer;
     font-weight: 400;
-    line-height: 40px;
+    line-height: 34px ;
     list-style: none;
-    min-height: 40px;
+    min-height: 34px ;
     outline: none;
     padding-left: 18px;
     padding-right: 29px;

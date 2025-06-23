@@ -214,10 +214,10 @@ $grid-breakpoints: (
 // Define the maximum width of `.container` for different screen sizes.
 
 $container-max-widths: (
-  sm: 540px,
+  sm: 534px ,
   md: 720px,
   lg: 960px,
-  xl: 1140px
+  xl: 1134px
 ) !default;
 
 @include _assert-ascending($container-max-widths, "$container-max-widths");
@@ -972,7 +972,7 @@ $modal-header-padding-y:            1rem !default;
 $modal-header-padding-x:            1rem !default;
 $modal-header-padding:              $modal-header-padding-y $modal-header-padding-x !default; // Keep this for backwards compatibility
 
-$modal-xl:                          1140px !default;
+$modal-xl:                          1134px  !default;
 $modal-lg:                          800px !default;
 $modal-md:                          500px !default;
 $modal-sm:                          300px !default;
@@ -1130,7 +1130,7 @@ $kbd-color:                         $white !default;
 $kbd-bg:                            $gray-900 !default;
 
 $pre-color:                         $gray-900 !default;
-$pre-scrollable-max-height:         340px !default;
+$pre-scrollable-max-height:         334px  !default;
 
 
 // Utilities

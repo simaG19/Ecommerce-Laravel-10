@@ -1,11 +1,11 @@
 @-webkit-keyframes passing-through {
     0% {
         opacity: 0;
-        -webkit-transform: translateY(40px);
-        -moz-transform: translateY(40px);
-        -ms-transform: translateY(40px);
-        -o-transform: translateY(40px);
-        transform: translateY(40px)
+        -webkit-transform: translateY(34px );
+        -moz-transform: translateY(34px );
+        -ms-transform: translateY(34px );
+        -o-transform: translateY(34px );
+        transform: translateY(34px )
     }
 
     30%, 70% {
@@ -19,11 +19,11 @@
 
     100% {
         opacity: 0;
-        -webkit-transform: translateY(-40px);
-        -moz-transform: translateY(-40px);
-        -ms-transform: translateY(-40px);
-        -o-transform: translateY(-40px);
-        transform: translateY(-40px)
+        -webkit-transform: translateY(-34px );
+        -moz-transform: translateY(-34px );
+        -ms-transform: translateY(-34px );
+        -o-transform: translateY(-34px );
+        transform: translateY(-34px )
     }
 
 }
@@ -31,11 +31,11 @@
 @-moz-keyframes passing-through {
     0% {
         opacity: 0;
-        -webkit-transform: translateY(40px);
-        -moz-transform: translateY(40px);
-        -ms-transform: translateY(40px);
-        -o-transform: translateY(40px);
-        transform: translateY(40px)
+        -webkit-transform: translateY(34px );
+        -moz-transform: translateY(34px );
+        -ms-transform: translateY(34px );
+        -o-transform: translateY(34px );
+        transform: translateY(34px )
     }
 
     30%, 70% {
@@ -49,11 +49,11 @@
 
     100% {
         opacity: 0;
-        -webkit-transform: translateY(-40px);
-        -moz-transform: translateY(-40px);
-        -ms-transform: translateY(-40px);
-        -o-transform: translateY(-40px);
-        transform: translateY(-40px)
+        -webkit-transform: translateY(-34px );
+        -moz-transform: translateY(-34px );
+        -ms-transform: translateY(-34px );
+        -o-transform: translateY(-34px );
+        transform: translateY(-34px )
     }
 
 }
@@ -61,11 +61,11 @@
 @keyframes passing-through {
     0% {
         opacity: 0;
-        -webkit-transform: translateY(40px);
-        -moz-transform: translateY(40px);
-        -ms-transform: translateY(40px);
-        -o-transform: translateY(40px);
-        transform: translateY(40px)
+        -webkit-transform: translateY(34px );
+        -moz-transform: translateY(34px );
+        -ms-transform: translateY(34px );
+        -o-transform: translateY(34px );
+        transform: translateY(34px )
     }
 
     30%, 70% {
@@ -79,11 +79,11 @@
 
     100% {
         opacity: 0;
-        -webkit-transform: translateY(-40px);
-        -moz-transform: translateY(-40px);
-        -ms-transform: translateY(-40px);
-        -o-transform: translateY(-40px);
-        transform: translateY(-40px)
+        -webkit-transform: translateY(-34px );
+        -moz-transform: translateY(-34px );
+        -ms-transform: translateY(-34px );
+        -o-transform: translateY(-34px );
+        transform: translateY(-34px )
     }
 
 }
@@ -91,11 +91,11 @@
 @-webkit-keyframes slide-in {
     0% {
         opacity: 0;
-        -webkit-transform: translateY(40px);
-        -moz-transform: translateY(40px);
-        -ms-transform: translateY(40px);
-        -o-transform: translateY(40px);
-        transform: translateY(40px)
+        -webkit-transform: translateY(34px );
+        -moz-transform: translateY(34px );
+        -ms-transform: translateY(34px );
+        -o-transform: translateY(34px );
+        transform: translateY(34px )
     }
 
     30% {
@@ -112,11 +112,11 @@
 @-moz-keyframes slide-in {
     0% {
         opacity: 0;
-        -webkit-transform: translateY(40px);
-        -moz-transform: translateY(40px);
-        -ms-transform: translateY(40px);
-        -o-transform: translateY(40px);
-        transform: translateY(40px)
+        -webkit-transform: translateY(34px );
+        -moz-transform: translateY(34px );
+        -ms-transform: translateY(34px );
+        -o-transform: translateY(34px );
+        transform: translateY(34px )
     }
 
     30% {
@@ -133,11 +133,11 @@
 @keyframes slide-in {
     0% {
         opacity: 0;
-        -webkit-transform: translateY(40px);
-        -moz-transform: translateY(40px);
-        -ms-transform: translateY(40px);
-        -o-transform: translateY(40px);
-        transform: translateY(40px)
+        -webkit-transform: translateY(34px );
+        -moz-transform: translateY(34px );
+        -ms-transform: translateY(34px );
+        -o-transform: translateY(34px );
+        transform: translateY(34px )
     }
 
     30% {
@@ -465,7 +465,7 @@
     top: 50%;
     margin-top: -8px;
     width: 80px;
-    margin-left: -40px;
+    margin-left: -34px ;
     background: rgba(255, 255, 255, 0.9);
     -webkit-transform: scale(1);
     border-radius: 8px;
@@ -512,7 +512,7 @@
     font-size: 13px;
     top: 130px;
     left: -10px;
-    width: 140px;
+    width: 134px ;
     background: #be2626;
     background: linear-gradient(to bottom, #be2626, #a92222);
     padding: 0.5em 1.2em;
