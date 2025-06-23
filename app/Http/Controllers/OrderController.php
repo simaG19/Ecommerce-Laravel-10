@@ -86,6 +86,34 @@ class OrderController extends Controller
      * @return \Illuminate\Http\Response
      */
 
+
+
+
+
+
+
+
+
+
+public function updateStatus(Request $request, Order $order)
+{
+    $data = $request->validate([
+        'status'         => 'sometimes|in:new,process,accepted,delivered,rejected',
+        'payment_status' => 'sometimes|in:Unpaid,paid',
+    ]);
+
+    if (count($data)) {
+        $order->update($data);
+        return back()->with('success', 'Order updated.');
+    }
+
+    return back()->with('error', 'Nothing to update.');
+}
+
+
+
+
+
 public function store(Request $request)
     {
         // 1) VALIDATION (same as before)
