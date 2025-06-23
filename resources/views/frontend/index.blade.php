@@ -23,7 +23,7 @@
                         <h1>Premium Copper Cables</h1>
                         <p>High-quality electrical cables for residential and commercial use. Durable, safe, and certified.</p>
                         <div class="slide-actions">
-                            <a href="{{route('product-grids')}}" class="btn-primary">Shop Now</a>
+                            <a href="{{route('product-grids')}}" style=" color: #000000" class="btn-primary">Shop Now</a>
                             {{-- <span class="price">Starting from 250</span> --}}
                         </div>
                     </div>
@@ -43,7 +43,7 @@
                         <h1>LAMP Light Fixtures</h1>
                         <p>Energy-efficient lamp solutions for homes and offices. Modern designs with long-lasting performance.</p>
                         <div class="slide-actions">
-                            <a href="{{route('product-grids')}}" class="btn-primary">Explore</a>
+                            <a href="{{route('product-grids')}}" style="color: #000000" class="btn-primary">Explore</a>
                             {{-- <span class="price">From 450</span> --}}
                         </div>
                     </div>
@@ -63,7 +63,7 @@
                         <h1>Professional Tools</h1>
                         <p>Complete range of electrical tools and equipment for professionals and DIY enthusiasts.</p>
                         <div class="slide-actions">
-                            <a href="{{route('product-grids')}}" class="btn-primary">View Tools</a>
+                            <a href="{{route('product-grids')}}" style="color: #000000" class="btn-primary">View Tools</a>
                             {{-- <span class="price">From 450</span> --}}
                         </div>
                     </div>
