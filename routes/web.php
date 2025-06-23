@@ -140,6 +140,20 @@ Route::get('order/pdf/{id}', [OrderController::class, 'pdf'])
     Route::get('payment/success', [PayPalController::class, 'success'])->name('payment.success');
 
 
+
+
+
+
+
+
+
+// Update order status or payment status
+Route::patch('admin/orders/{order}/update', [OrderController::class, 'updateStatus'])
+     ->name('admin.orders.updateStatus');
+
+
+
+
 // Backend section start
 
     Route::group(['prefix' => '/admin', 'middleware' => ['auth', 'admin']], function () {
