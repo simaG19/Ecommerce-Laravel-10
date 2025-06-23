@@ -1,5 +1,5 @@
 @extends('frontend.layouts.master')
-@section('title','E-SHOP || HOME PAGE')
+@section('title','Ellie Electrical || HOME PAGE')
 @section('main-content')
 <!-- Slider Area -->
 
@@ -23,12 +23,12 @@
                         <h1>Premium Copper Cables</h1>
                         <p>High-quality electrical cables for residential and commercial use. Durable, safe, and certified.</p>
                         <div class="slide-actions">
-                            <a href="#" class="btn-primary">Shop Now</a>
-                            <span class="price">Starting from 250</span>
+                            <a href="{{route('product-grids')}}" class="btn-primary">Shop Now</a>
+                            {{-- <span class="price">Starting from 250</span> --}}
                         </div>
                     </div>
                     <div class="content-right">
-                        <img src="/placeholder.svg?height=300&width=400" alt="Electrical Cables" class="product-image">
+                        <img src="images/cp4.png" style="width" alt="Electrical Cables" class="product-image">
                     </div>
                 </div>
             </div>
@@ -39,16 +39,16 @@
             <div class="slide-bg" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
                 <div class="slide-content">
                     <div class="content-left">
-                        <span class="category">LIGHTING SOLUTIONS</span>
-                        <h1>LED Light Fixtures</h1>
-                        <p>Energy-efficient LED lighting solutions for homes and offices. Modern designs with long-lasting performance.</p>
+                        <span class="category"> LAMP LIGHTING SOLUTIONS</span>
+                        <h1>LAMP Light Fixtures</h1>
+                        <p>Energy-efficient lamp solutions for homes and offices. Modern designs with long-lasting performance.</p>
                         <div class="slide-actions">
-                            <a href="#" class="btn-primary">Explore</a>
-                            <span class="price">From 450</span>
+                            <a href="{{route('product-grids')}}" class="btn-primary">Explore</a>
+                            {{-- <span class="price">From 450</span> --}}
                         </div>
                     </div>
                     <div class="content-right">
-                        <img src="/placeholder.svg?height=300&width=400" alt="LED Lights" class="product-image">
+                        <img src="images/lamp.png" alt="LED Lights" class="product-image">
                     </div>
                 </div>
             </div>
@@ -63,12 +63,12 @@
                         <h1>Professional Tools</h1>
                         <p>Complete range of electrical tools and equipment for professionals and DIY enthusiasts.</p>
                         <div class="slide-actions">
-                            <a href="#" class="btn-primary">View Tools</a>
-                            <span class="price">From 450</span>
+                            <a href="{{route('product-grids')}}" class="btn-primary">View Tools</a>
+                            {{-- <span class="price">From 450</span> --}}
                         </div>
                     </div>
                     <div class="content-right">
-                        <img src="/placeholder.svg?height=300&width=400" alt="Power Tools" class="product-image">
+                        <img src="images/el.png" alt="Power Tools" class="product-image">
                     </div>
                 </div>
             </div>
@@ -215,7 +215,7 @@
     max-width: 100%;
     height: auto;
     border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    /* box-shadow: 0 10px 30px rgba(0, 0, 0, 0); */
 }
 
 /* Navigation */
@@ -759,8 +759,8 @@ function handleSwipe() {
     </div>
 </section>
 <!-- End Shop Services Area -->
-
-@include('frontend.layouts.newsletter')
+{{--
+@include('frontend.layouts.newsletter') --}}
 
 <!-- Modal -->
 @if($product_lists)
@@ -883,7 +883,7 @@ function handleSwipe() {
                                             </div>
                                         </form>
                                         <div class="default-social">
-                                        <!-- ShareThis BEGIN --><div class="sharethis-inline-share-buttons"></div><!-- ShareThis END -->
+                                        {{-- <!-- ShareThis BEGIN --><div class="sharethis-inline-share-buttons"></div><!-- ShareThis END --> --}}
                                         </div>
                                     </div>
                                 </div>
