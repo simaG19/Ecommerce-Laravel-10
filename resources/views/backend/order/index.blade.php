@@ -57,7 +57,28 @@
         <td>{{ $order->first_name }} {{ $order->last_name }}</td>
         <td>{{ $order->email }}</td>
         <td>{{ $order->quantity }}</td>
-        <td>{{ $order->payment_status }}</td>
+        <td>
+  <form
+    method="POST"
+    action="{{ route('admin.orders.updateStatus', $order) }}"
+    style="display:inline"
+  >
+    @csrf
+    @method('PATCH')
+    <select
+      name="payment_status"
+      onchange="this.form.submit()"
+      class="form-control form-control-sm"
+      style="width: auto; display: inline-block;"
+    >
+      @foreach(['Unpaid'=>'Unpaid','paid'=>'Paid'] as $val => $label)
+        <option value="{{ $val }}" @if($order->payment_status === $val) selected @endif>
+          {{ $label }}
+        </option>
+      @endforeach
+    </select>
+  </form>
+</td>
         <td>
           @if($order->screenshoot)
             <img
@@ -70,21 +91,28 @@
           @endif
         </td>
         <td>{{ number_format($order->total_amount, 2) }}</td>
-        <td>
-          @switch($order->status)
-            @case('new')
-              <span class="badge badge-primary">new</span>
-              @break
-            @case('process')
-              <span class="badge badge-warning">process</span>
-              @break
-            @case('delivered')
-              <span class="badge badge-success">delivered</span>
-              @break
-            @default
-              <span class="badge badge-danger">{{ $order->status }}</span>
-          @endswitch
-        </td>
+    <td>
+  <form
+    method="POST"
+    action="{{ route('admin.orders.updateStatus', $order) }}"
+    style="display:inline"
+  >
+    @csrf
+    @method('PATCH')
+    <select
+      name="status"
+      onchange="this.form.submit()"
+      class="form-control form-control-sm"
+      style="width: auto; display: inline-block;"
+    >
+      @foreach(['new'=>'New','process'=>'Processing','accepted'=>'Accepted','delivered'=>'Delivered','rejected'=>'Rejected'] as $val => $label)
+        <option value="{{ $val }}" @if($order->status === $val) selected @endif>
+          {{ $label }}
+        </option>
+      @endforeach
+    </select>
+  </form>
+</td>
         <td>
           <a
             href="{{ route('user.order.show', $order->id) }}"
