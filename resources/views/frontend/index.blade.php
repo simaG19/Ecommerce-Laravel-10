@@ -6,186 +6,121 @@
     <section id="Gslider" class="carousel slide" data-ride="carousel">
         <ol class="carousel-indicators">
             @foreach($banners as $key=>$banner)
-        <li data-target="#Gslider" data-slide-to="{{$key}}" class="{{(($key==0)? 'active' : '')}}" style="width: 12px; height: 12px; border-radius: 50%; margin: 0 6px;"></li>
+        <li data-target="#Gslider" data-slide-to="{{$key}}" class="{{(($key==0)? 'active' : '')}}"></li>
             @endforeach
+
         </ol>
         <div class="carousel-inner" role="listbox">
                 @foreach($banners as $key=>$banner)
                 <div class="carousel-item {{(($key==0)? 'active' : '')}}">
-                    <img class="first-slide w-100" src="{{$banner->photo}}" alt="First slide" style="height: 300px; object-fit: cover;">
-                    <div class="carousel-caption text-left" style="
-                        position: absolute;
-                        bottom: 20px;
-                        left: 20px;
-                        right: 20px;
-                        background: rgba(0,0,0,0.6);
-                        padding: 20px;
-                        border-radius: 10px;
-                        color: white;
-                    ">
-                        <h1 class="wow fadeInDown" style="
-                            font-size: 1.8rem;
-                            font-weight: bold;
-                            margin-bottom: 10px;
-                            line-height: 1.2;
-                        ">{{$banner->title}}</h1>
-                        <p style="
-                            font-size: 1rem;
-                            margin-bottom: 15px;
-                            line-height: 1.4;
-                            display: -webkit-box;
-                            -webkit-line-clamp: 3;
-                            -webkit-box-orient: vertical;
-                            overflow: hidden;
-                        ">{!! html_entity_decode($banner->description) !!}</p>
-                        <a class="btn btn-lg ws-btn wow fadeInUpBig" href="{{route('product-grids')}}" role="button" style="
-                            background: #007bff;
-                            color: white;
-                            padding: 12px 25px;
-                            font-size: 1.1rem;
-                            border: none;
-                            border-radius: 25px;
-                            text-decoration: none;
-                            display: inline-flex;
-                            align-items: center;
-                            gap: 8px;
-                            transition: all 0.3s ease;
-                        ">Shop Now <i class="far fa-arrow-alt-circle-right"></i></a>
+                    <img class="first-slide" src="{{$banner->photo}}" alt="First slide">
+                    <div class="carousel-caption d-none d-md-block text-left">
+                        <h1 class="wow fadeInDown">{{$banner->title}}</h1>
+                        <p>{!! html_entity_decode($banner->description) !!}</p>
+                        <a class="btn btn-lg ws-btn wow fadeInUpBig" href="{{route('product-grids')}}" role="button">Shop Now<i class="far fa-arrow-alt-circle-right"></i></i></a>
                     </div>
                 </div>
             @endforeach
         </div>
-        <a class="carousel-control-prev" href="#Gslider" role="button" data-slide="prev" style="
-            width: 50px;
-            height: 50px;
-            background: rgba(0,0,0,0.5);
-            border-radius: 50%;
-            top: 50%;
-            transform: translateY(-50%);
-            left: 15px;
-        ">
-        <span class="carousel-control-prev-icon" aria-hidden="true" style="width: 24px; height: 24px;"></span>
+        <a class="carousel-control-prev" href="#Gslider" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
         <span class="sr-only">Previous</span>
         </a>
-        <a class="carousel-control-next" href="#Gslider" role="button" data-slide="next" style="
-            width: 50px;
-            height: 50px;
-            background: rgba(0,0,0,0.5);
-            border-radius: 50%;
-            top: 50%;
-            transform: translateY(-50%);
-            right: 15px;
-        ">
-        <span class="carousel-control-next-icon" aria-hidden="true" style="width: 24px; height: 24px;"></span>
+        <a class="carousel-control-next" href="#Gslider" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
         <span class="sr-only">Next</span>
         </a>
     </section>
 
-    <!-- Mobile-specific CSS -->
+    <!-- Mobile-only adjustments -->
     <style>
-    /* Mobile optimizations */
+    /* Mobile-only modifications - Desktop remains original */
     @media (max-width: 767px) {
+        /* Make images responsive on mobile */
         #Gslider .carousel-item img {
-            height: 250px !important;
+            width: 100%;
+            height: auto;
+            max-height: 250px;
+            object-fit: cover;
         }
 
+        /* Show caption on mobile with proper styling */
         #Gslider .carousel-caption {
-            bottom: 10px !important;
-            left: 10px !important;
-            right: 10px !important;
-            padding: 15px !important;
+            display: block !important;
+            position: absolute;
+            bottom: 20px;
+            left: 15px;
+            right: 15px;
+            background: rgba(0,0,0,0.7);
+            padding: 15px;
+            border-radius: 8px;
+            color: white;
         }
 
+        /* Mobile text sizes */
         #Gslider .carousel-caption h1 {
-            font-size: 1.4rem !important;
-            margin-bottom: 8px !important;
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+            line-height: 1.2;
         }
 
         #Gslider .carousel-caption p {
-            font-size: 0.9rem !important;
-            margin-bottom: 12px !important;
-            -webkit-line-clamp: 2 !important;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            line-height: 1.3;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
 
+        /* Mobile button */
         #Gslider .carousel-caption .btn {
-            padding: 10px 20px !important;
-            font-size: 1rem !important;
+            padding: 8px 16px;
+            font-size: 0.9rem;
         }
 
+        /* Mobile carousel controls */
         #Gslider .carousel-control-prev,
         #Gslider .carousel-control-next {
-            width: 40px !important;
-            height: 40px !important;
+            width: 40px;
+            height: 40px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.5);
+            border-radius: 50%;
+        }
+
+        #Gslider .carousel-control-prev {
+            left: 10px;
+        }
+
+        #Gslider .carousel-control-next {
+            right: 10px;
         }
 
         #Gslider .carousel-control-prev-icon,
         #Gslider .carousel-control-next-icon {
-            width: 20px !important;
-            height: 20px !important;
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Mobile indicators */
+        #Gslider .carousel-indicators {
+            bottom: 10px;
         }
 
         #Gslider .carousel-indicators li {
-            width: 10px !important;
-            height: 10px !important;
-            margin: 0 4px !important;
-        }
-    }
-
-    /* Tablet optimizations */
-    @media (min-width: 768px) and (max-width: 991px) {
-        #Gslider .carousel-item img {
-            height: 350px !important;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin: 0 4px;
         }
 
-        #Gslider .carousel-caption h1 {
-            font-size: 2rem !important;
+        /* Remove any extra spacing on mobile */
+        #Gslider {
+            margin-bottom: 0;
         }
-
-        #Gslider .carousel-caption p {
-            font-size: 1.1rem !important;
-        }
-    }
-
-    /* Desktop optimizations */
-    @media (min-width: 992px) {
-        #Gslider .carousel-item img {
-            height: 500px !important;
-        }
-
-        #Gslider .carousel-caption {
-            bottom: 50px !important;
-            left: 50px !important;
-            right: 50px !important;
-            padding: 30px !important;
-        }
-
-        #Gslider .carousel-caption h1 {
-            font-size: 2.5rem !important;
-        }
-
-        #Gslider .carousel-caption p {
-            font-size: 1.2rem !important;
-        }
-    }
-
-    /* Touch improvements */
-    #Gslider .carousel-control-prev,
-    #Gslider .carousel-control-next {
-        opacity: 0.8;
-        transition: all 0.3s ease;
-    }
-
-    #Gslider .carousel-control-prev:hover,
-    #Gslider .carousel-control-next:hover {
-        opacity: 1;
-        transform: translateY(-50%) scale(1.1);
-    }
-
-    /* Button hover effect */
-    #Gslider .carousel-caption .btn:hover {
-        background: #0056b3 !important;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(0,123,255,0.3);
     }
     </style>
 @endif
