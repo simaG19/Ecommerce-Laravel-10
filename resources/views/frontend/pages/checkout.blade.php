@@ -125,8 +125,19 @@
     <input name="payment_method" type="radio" value="cod" id="cod">
     <label for="cod">Cash On Delivery</label><br>
 
+    <div style="padding: 1rem; border: 1px solid #ddd; border-radius: 6px; background-color: #f9f9f9; margin-top: 1rem;">
+  <p style="font-weight: bold; margin-bottom: 0.5rem;">
+    CBE-1000333755223 <span style="color: #666;">(Elli Electrical Equipment)</span>
+  </p>
+
+  <div style="display: flex; align-items: center; gap: 0.5rem;">
     <input name="payment_method" type="radio" value="paypal" id="paypal">
-    <label for="paypal">Attach Payment Screenshot</label>
+    <label for="paypal" style="margin: 0; font-weight: 500; cursor: pointer;">
+      Attach Payment Screenshot
+    </label>
+  </div>
+</div>
+
 </form-group>
 
 <!-- Screenshot upload form (initially hidden) -->
