@@ -1,18 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
 <header class="header shop">
     <!-- Topbar -->
-    <div class="topbar mobile-large-font">
+    <div class="topbar">
         <div class="container">
             <div class="row">
                 <div class="col-lg-6 col-md-12 col-12">
                     <!-- Top Left -->
                     <div class="top-left">
-                        <ul class="list-main">
+                        {{-- <ul class="list-main">
                             @php
                                 $settings=DB::table('settings')->get();
                             @endphp
-                            <li class="mobile-large-font"><i class="ti-headphone-alt mobile-large-icon"></i>@foreach($settings as $data) {{$data->phone}} @endforeach</li>
-                            <li class="mobile-large-font"><i class="ti-email mobile-large-icon"></i> @foreach($settings as $data) {{$data->email}} @endforeach</li>
-                        </ul>
+                            <li><i class="ti-headphone-alt" style="font-size: 1.3rem; margin-right: 8px;"></i><span style="font-size: 1.1rem;">@foreach($settings as $data) {{$data->phone}} @endforeach</span></li>
+                            <li><i class="ti-email" style="font-size: 1.3rem; margin-right: 8px;"></i><span style="font-size: 1.1rem;"> @foreach($settings as $data) {{$data->email}} @endforeach</span></li>
+                        </ul> --}}
                     </div>
                     <!--/ End Top Left -->
                 </div>
@@ -22,14 +29,14 @@
                         <ul class="list-main">
                             @auth
                                 @if(Auth::user()->role=='admin')
-                                    <li class="mobile-large-font"><i class="ti-user mobile-large-icon"></i> <a href="{{route('admin')}}" target="_blank" class="mobile-large-font">Dashboard</a></li>
+                                    <li><i class="ti-user" style="font-size: 1.3rem; margin-right: 8px;"></i> <a href="{{route('admin')}}" target="_blank" style="font-size: 1.1rem;">Dashboard</a></li>
                                 @else
-                                    <li class="mobile-large-font"><i class="ti-user mobile-large-icon"></i> <a href="{{route('user')}}" target="_blank" class="mobile-large-font">Dashboard</a></li>
+                                    <li><i class="ti-user" style="font-size: 1.3rem; margin-right: 8px;"></i> <a href="{{route('user')}}" target="_blank" style="font-size: 1.1rem;">Dashboard</a></li>
                                 @endif
-                                <li class="mobile-large-font"><i class="ti-power-off mobile-large-icon"></i> <a href="{{route('user.logout')}}" class="mobile-large-font">Logout</a></li>
+                                <li><i class="ti-power-off" style="font-size: 1.3rem; margin-right: 8px;"></i> <a href="{{route('user.logout')}}" style="font-size: 1.1rem;">Logout</a></li>
 
                             @else
-                                <li class="mobile-large-font"><i class="ti-power-off mobile-large-icon"></i><a href="{{route('login.form')}}" class="mobile-large-font">Login /</a> <a href="{{route('register.form')}}" class="mobile-large-font">Register</a></li>
+                                <li><i class="ti-power-off" style="font-size: 1.3rem; margin-right: 8px;"></i><a href="{{route('login.form')}}" style="font-size: 1.1rem;">Login /</a> <a href="{{route('register.form')}}" style="font-size: 1.1rem;">Register</a></li>
                             @endauth
                         </ul>
                     </div>
@@ -48,17 +55,23 @@
                         @php
                             $settings=DB::table('settings')->get();
                         @endphp
-                        <a href="{{route('home')}}"><img src="images/image.png" alt="logo" class="mobile-large-logo"></a>
+                        <a href="{{route('home')}}"><img src="images/image.png" alt="logo" style="max-height: 55px; width: auto;"></a>
                     </div>
                     <!--/ End Logo -->
                     <!-- Search Form -->
                     <div class="search-top">
-                        <div class="top-search"><a href="#0" class="mobile-touch-target"><i class="ti-search mobile-large-search-icon"></i></a></div>
+                        <div class="top-search">
+                            <a href="#0" style="min-width: 50px; min-height: 50px; display: inline-flex; align-items: center; justify-content: center; padding: 10px;">
+                                <i class="ti-search" style="font-size: 1.6rem;"></i>
+                            </a>
+                        </div>
                         <!-- Search Form -->
                         <div class="search-top">
                             <form class="search-form">
-                                <input type="text" placeholder="Search here..." name="search" class="mobile-large-input">
-                                <button value="search" type="submit" class="mobile-touch-button"><i class="ti-search mobile-large-icon"></i></button>
+                                <input type="text" placeholder="Search here..." name="search" style="font-size: 1.3rem; padding: 15px; min-height: 50px;">
+                                <button value="search" type="submit" style="padding: 15px; min-width: 50px; min-height: 50px;">
+                                    <i class="ti-search" style="font-size: 1.4rem;"></i>
+                                </button>
                             </form>
                         </div>
                         <!--/ End Search Form -->
@@ -69,7 +82,7 @@
                 <div class="col-lg-8 col-md-7 col-12">
                     <div class="search-bar-top">
                         <div class="search-bar">
-                            <select class="mobile-large-select">
+                            <select style="font-size: 1.2rem; padding: 15px; min-height: 50px;">
                                 <option>All Category</option>
                                 @foreach(Helper::getAllCategory() as $cat)
                                     <option>{{$cat->title}}</option>
@@ -77,16 +90,20 @@
                             </select>
                             <form method="POST" action="{{route('product.search')}}">
                                 @csrf
-                                <input name="search" placeholder="Search Products Here....." type="search" class="mobile-large-input">
-                                <button class="btnn mobile-touch-button" type="submit"><i class="ti-search mobile-extra-large-icon"></i></button>
+                                <input name="search" placeholder="Search Products Here....." type="search" style="font-size: 1.3rem; padding: 15px; min-height: 50px; flex: 1;">
+                                <button class="btnn" type="submit" style="padding: 15px 20px; min-width: 50px; min-height: 50px;">
+                                    <i class="ti-search" style="font-size: 1.5rem;"></i>
+                                </button>
                             </form>
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-2 col-md-3 col-12">
+
+                <!-- Desktop Cart/Wishlist - Hidden on Mobile -->
+                <div class="col-lg-2 col-md-3 col-12 d-none d-md-block">
                     <div class="right-bar">
-                        <!-- Search Form -->
-                        <div class="sinlge-bar shopping">
+                        <!-- Wishlist -->
+                        <div class="sinlge-bar shopping" style="position: relative;">
                             @php
                                 $total_prod=0;
                                 $total_amount=0;
@@ -99,78 +116,91 @@
                                     @endphp
                                 @endforeach
                            @endif
-                            <a href="{{route('wishlist')}}" class="single-icon mobile-touch-target">
-                                <i class="fa fa-heart-o mobile-extra-large-icon"></i>
-                                <span class="total-count mobile-large-badge">{{Helper::wishlistCount()}}</span>
+
+                            <a href="{{route('wishlist')}}" class="single-icon" style="min-width: 30px; min-height: 30px; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; padding: 10px; margin: 5px;">
+                                <i class="fa fa-heart-o" style="font-size: 22px; margin-right: 4px;"></i>
+                                <span class="total-count" style="font-size: 1.1rem; padding: 6px 5px; min-width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; background: #dc3545; color: white; border-radius: 50%; font-weight: bold;">{{Helper::wishlistCount()}}</span>
                             </a>
-                            <!-- Shopping Item -->
+
+                            <!-- Desktop Shopping Item -->
                             @auth
-                                <div class="shopping-item">
-                                    <div class="dropdown-cart-header mobile-large-font">
+                                <div class="shopping-item" style="position: absolute; top: 100%; right: 0; background: white; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 320px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s ease;">
+                                    <div class="dropdown-cart-header" style="font-size: 1.2rem; padding: 15px; border-bottom: 1px solid #eee;">
                                         <span>{{count(Helper::getAllProductFromWishlist())}} Items</span>
-                                        <a href="{{route('wishlist')}}">View Wishlist</a>
+                                        <a href="{{route('wishlist')}}" style="color: #007bff;">View All</a>
                                     </div>
-                                    <ul class="shopping-list">
-                                        {{-- {{Helper::getAllProductFromCart()}} --}}
-                                            @foreach(Helper::getAllProductFromWishlist() as $data)
-                                                    @php
-                                                        $photo=explode(',',$data->product['photo']);
-                                                    @endphp
-                                                    <li>
-                                                        <a href="{{route('wishlist-delete',$data->id)}}" class="remove" title="Remove this item"><i class="fa fa-remove mobile-large-icon"></i></a>
-                                                        <a class="cart-img" href="#"><img src="{{$photo[0]}}" alt="{{$photo[0]}}"></a>
-                                                        <h4 class="mobile-large-font"><a href="{{route('product-detail',$data->product['slug'])}}" target="_blank">{{$data->product['title']}}</a></h4>
-                                                        <p class="quantity mobile-medium-font">{{$data->quantity}} x - <span class="amount">${{number_format($data->price,2)}}</span></p>
-                                                    </li>
-                                            @endforeach
+                                    <ul class="shopping-list" style="max-height: 300px; overflow-y: auto; padding: 0; margin: 0; list-style: none;">
+                                        @foreach(Helper::getAllProductFromWishlist() as $data)
+                                                @php
+                                                    $photo=explode(',',$data->product['photo']);
+                                                @endphp
+                                                <li style="padding: 15px; border-bottom: 1px solid #f5f5f5; display: flex; align-items: center;">
+                                                    <a href="{{route('wishlist-delete',$data->id)}}" class="remove" title="Remove this item" style="margin-right: 10px;">
+                                                        <i class="fa fa-remove" style="font-size: 1.3rem; color: #dc3545;"></i>
+                                                    </a>
+                                                    <a class="cart-img" href="#" style="margin-right: 15px;"><img src="{{$photo[0]}}" alt="{{$photo[0]}}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;"></a>
+                                                    <div style="flex: 1;">
+                                                        <h4 style="font-size: 1.1rem; margin: 0 0 5px 0; line-height: 1.3;">
+                                                            <a href="{{route('product-detail',$data->product['slug'])}}" target="_blank" style="color: #333; text-decoration: none;">{{$data->product['title']}}</a>
+                                                        </h4>
+                                                        <p class="quantity" style="font-size: 1rem; margin: 0; color: #666;">{{$data->quantity}} x - <span class="amount">${{number_format($data->price,2)}}</span></p>
+                                                    </div>
+                                                </li>
+                                        @endforeach
                                     </ul>
-                                    <div class="bottom">
-                                        <div class="total mobile-large-font">
+                                    <div class="bottom" style="padding: 15px; border-top: 1px solid #eee;">
+                                        <div class="total" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; display: flex; justify-content: space-between;">
                                             <span>Total</span>
                                             <span class="total-amount">${{number_format(Helper::totalWishlistPrice(),2)}}</span>
                                         </div>
-                                        <a href="{{route('cart')}}" class="btn animate mobile-large-button">Cart</a>
+                                        <a href="{{route('cart')}}" class="btn animate" style="font-size: 1.1rem; padding: 12px 20px; width: 100%; text-align: center; display: block; background: #007bff; color: white; text-decoration: none; border-radius: 6px;">Move to Cart</a>
                                     </div>
                                 </div>
                             @endauth
-                            <!--/ End Shopping Item -->
                         </div>
-                        <div class="sinlge-bar shopping">
-                            <a href="{{route('cart')}}" class="single-icon mobile-touch-target">
-                                <i class="ti-bag mobile-extra-large-icon"></i>
-                                <span class="total-count mobile-large-badge">{{Helper::cartCount()}}</span>
+
+                        <!-- Shopping Cart -->
+                        <div class="sinlge-bar shopping" style="position: relative;">
+                            <a href="{{route('cart')}}" class="single-icon" style="min-width: 40px; min-height: 40px; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; padding: 10px; margin: 5px;">
+                                <i class="ti-bag" style="font-size: 22px; margin-right: 4px;"></i>
+                                <span class="total-count" style="font-size: 1.1rem; padding: 6px 10px; min-width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; background: #007bff; color: white; border-radius: 50%; font-weight: bold;">{{Helper::cartCount()}}</span>
                             </a>
-                            <!-- Shopping Item -->
+
+                            <!-- Desktop Shopping Item -->
                             @auth
-                                <div class="shopping-item">
-                                    <div class="dropdown-cart-header mobile-large-font">
+                                <div class="shopping-item" style="position: absolute; top: 100%; right: 0; background: white; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); width: 320px; z-index: 1000; opacity: 0; visibility: hidden; transition: all 0.3s ease;">
+                                    <div class="dropdown-cart-header" style="font-size: 1.2rem; padding: 15px; border-bottom: 1px solid #eee;">
                                         <span>{{count(Helper::getAllProductFromCart())}} Items</span>
-                                        <a href="{{route('cart')}}">View Cart</a>
+                                        <a href="{{route('cart')}}" style="color: #007bff;">View All</a>
                                     </div>
-                                    <ul class="shopping-list">
-                                        {{-- {{Helper::getAllProductFromCart()}} --}}
-                                            @foreach(Helper::getAllProductFromCart() as $data)
-                                                    @php
-                                                        $photo=explode(',',$data->product['photo']);
-                                                    @endphp
-                                                    <li>
-                                                        <a href="{{route('cart-delete',$data->id)}}" class="remove" title="Remove this item"><i class="fa fa-remove mobile-large-icon"></i></a>
-                                                        <a class="cart-img" href="#"><img src="{{$photo[0]}}" alt="{{$photo[0]}}"></a>
-                                                        <h4 class="mobile-large-font"><a href="{{route('product-detail',$data->product['slug'])}}" target="_blank">{{$data->product['title']}}</a></h4>
-                                                        <p class="quantity mobile-medium-font">{{$data->quantity}} x - <span class="amount">{{number_format($data->price,2)}} Birr</span></p>
-                                                    </li>
-                                            @endforeach
+                                    <ul class="shopping-list" style="max-height: 300px; overflow-y: auto; padding: 0; margin: 0; list-style: none;">
+                                        @foreach(Helper::getAllProductFromCart() as $data)
+                                                @php
+                                                    $photo=explode(',',$data->product['photo']);
+                                                @endphp
+                                                <li style="padding: 15px; border-bottom: 1px solid #f5f5f5; display: flex; align-items: center;">
+                                                    <a href="{{route('cart-delete',$data->id)}}" class="remove" title="Remove this item" style="margin-right: 10px;">
+                                                        <i class="fa fa-remove" style="font-size: 1.3rem; color: #dc3545;"></i>
+                                                    </a>
+                                                    <a class="cart-img" href="#" style="margin-right: 15px;"><img src="{{$photo[0]}}" alt="{{$photo[0]}}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;"></a>
+                                                    <div style="flex: 1;">
+                                                        <h4 style="font-size: 1.1rem; margin: 0 0 5px 0; line-height: 1.3;">
+                                                            <a href="{{route('product-detail',$data->product['slug'])}}" target="_blank" style="color: #333; text-decoration: none;">{{$data->product['title']}}</a>
+                                                        </h4>
+                                                        <p class="quantity" style="font-size: 1rem; margin: 0; color: #666;">{{$data->quantity}} x - <span class="amount">{{number_format($data->price,2)}} Birr</span></p>
+                                                    </div>
+                                                </li>
+                                        @endforeach
                                     </ul>
-                                    <div class="bottom">
-                                        <div class="total mobile-large-font">
+                                    <div class="bottom" style="padding: 15px; border-top: 1px solid #eee;">
+                                        <div class="total" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; display: flex; justify-content: space-between;">
                                             <span>Total</span>
                                             <span class="total-amount">{{number_format(Helper::totalCartPrice(),2)}} Birr</span>
                                         </div>
-                                        <a href="{{route('checkout')}}" class="btn animate mobile-large-button">Checkout</a>
+                                        <a href="{{route('checkout')}}" class="btn animate" style="font-size: 1.1rem; padding: 12px 20px; width: 100%; text-align: center; display: block; background: #28a745; color: white; text-decoration: none; border-radius: 6px;">Checkout</a>
                                     </div>
                                 </div>
                             @endauth
-                            <!--/ End Shopping Item -->
                         </div>
                     </div>
                 </div>
@@ -190,21 +220,21 @@
                                     <div class="nav-inner">
                                         <ul class="nav main-menu menu navbar-nav">
                                             <li class="{{Request::path()=='home' ? 'active' : ''}}">
-                                                <a href="{{route('home')}}" class="mobile-large-nav-link">Home</a>
+                                                <a href="{{route('home')}}" style="font-size: 15px; padding: 18px 25px; min-height: 50px; display: flex; align-items: center;">Home</a>
                                             </li>
                                             <li class="{{Request::path()=='about-us' ? 'active' : ''}}">
-                                                <a href="{{route('about-us')}}" class="mobile-large-nav-link">About Us</a>
+                                                <a href="{{route('about-us')}}" style="font-size: 15px; padding: 18px 25px; min-height: 50px; display: flex; align-items: center;">About Us</a>
                                             </li>
                                             <li class="@if(Request::path()=='product-grids'||Request::path()=='product-lists')  active  @endif">
-                                                <a href="{{route('product-grids')}}" class="mobile-large-nav-link">Products</a>
-                                                <span class="new mobile-small-badge">New</span>
+                                                <a href="{{route('product-grids')}}" style="font-size: 15px; padding: 18px 25px; min-height: 50px; display: flex; align-items: center;">Products</a>
+                                                <span class="new" style="font-size: 1rem; padding: 6px 10px; margin-left: 8px;">New</span>
                                             </li>
                                             {{Helper::getHeaderCategory()}}
                                             <li class="{{Request::path()=='blog' ? 'active' : ''}}">
-                                                <a href="{{route('blog')}}" class="mobile-large-nav-link">Blog</a>
+                                                <a href="{{route('blog')}}" style="font-size: 15px; padding: 18px 25px; min-height: 50px; display: flex; align-items: center;">Blog</a>
                                             </li>
                                             <li class="{{Request::path()=='contact' ? 'active' : ''}}">
-                                                <a href="{{route('contact')}}" class="mobile-large-nav-link">Contact Us</a>
+                                                <a href="{{route('contact')}}" style="font-size: 15px; padding: 18px 25px; min-height: 50px; display: flex; align-items: center;">Contact Us</a>
                                             </li>
                                         </ul>
                                     </div>
@@ -220,107 +250,153 @@
     <!--/ End Header Inner -->
 </header>
 
+<!-- Mobile Floating Cart & Wishlist Buttons -->
+<div class="mobile-floating-buttons d-md-none">
+    <!-- Floating Wishlist Button -->
+    <div class="floating-wishlist" style="position: fixed; bottom: 90px; right: 15px; z-index: 9999;">
+        <a href="{{route('wishlist')}}" style="
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            background: #dc3545;
+            color: white;
+            border-radius: 50%;
+            text-decoration: none;
+            box-shadow: 0 2px 12px rgba(220, 53, 69, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+        ">
+            <i class="fa fa-heart-o" style="font-size: 1.3rem;"></i>
+            @if(Helper::wishlistCount() > 0)
+            <span style="
+                position: absolute;
+                top: -6px;
+                right: -6px;
+                background: white;
+                color: #dc3545;
+                border-radius: 50%;
+                width: 20px;
+                height: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.8rem;
+                font-weight: bold;
+                border: 1px solid #dc3545;
+            ">{{Helper::wishlistCount()}}</span>
+            @endif
+        </a>
+    </div>
+
+    <!-- Floating Cart Button -->
+    <div class="floating-cart" style="position: fixed; bottom: 38px; right: 15px; z-index: 9999;">
+        <a href="{{route('cart')}}" style="
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: #007bff;
+            color: white;
+            border-radius: 50%;
+            text-decoration: none;
+            box-shadow: 0 3px 15px rgba(0, 123, 255, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+        ">
+            <i class="ti-bag" style="font-size: 1.4rem;"></i>
+            @if(Helper::cartCount() > 0)
+            <span style="
+                position: absolute;
+                top: -6px;
+                right: -6px;
+                background: white;
+                color: #007bff;
+                border-radius: 50%;
+                width: 22px;
+                height: 22px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 0.85rem;
+                font-weight: bold;
+                border: 1px solid #007bff;
+            ">{{Helper::cartCount()}}</span>
+            @endif
+        </a>
+    </div>
+</div>
+
 <style>
-/* Mobile-only font and icon size increases */
-@media (max-width: 867px) {
-
-    /* Font sizes for mobile */
-    .mobile-large-font {
-        font-size: 10px;
-    }
-
-    .mobile-medium-font {
-        font-size: 1.4rem !important;
-    }
-
-    /* Icon sizes for mobile */
-    .mobile-large-icon {
-        font-size: 1.8rem !important;
-        margin-right: 8px !important;
-    }
-
-    .mobile-extra-large-icon {
-        font-size: 1.9rem !important;
-    }
-
-    .mobile-large-search-icon {
-        font-size: 1.5rem !important;
-    }
-
-    /* Input and form elements */
-    .mobile-large-input {
-        font-size: 1.2rem !important;
-        padding: 12px 15px !important;
-    }
-
-    .mobile-large-select {
-        font-size: 1.1rem !important;
-        padding: 12px 15px !important;
-    }
-
-    /* Touch targets */
-    .mobile-touch-target {
-        min-width: 48px !important;
-        min-height: 48px !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-    }
-
-    .mobile-touch-button {
-        padding: 12px 15px !important;
-        min-width: 48px !important;
-        min-height: 48px !important;
-    }
-
-    /* Badges and counts */
-    .mobile-large-badge {
-        font-size: 1rem !important;
-        padding: 4px 8px !important;
-        min-width: 24px !important;
-        height: 24px !important;
-    }
-
-    .mobile-small-badge {
-        font-size: 0.9rem !important;
-        padding: 4px 8px !important;
-    }
-
-    /* Navigation links */
-    .mobile-large-nav-link {
-        font-size: 1.3rem !important;
-        padding: 15px 20px !important;
-        min-height: 48px !important;
-        display: flex !important;
-        align-items: center !important;
-    }
-
-    /* Buttons */
-    .mobile-large-button {
-        font-size: 1.1rem !important;
-        padding: 12px 20px !important;
-        min-height: 48px !important;
-    }
-
-    /* Logo */
-    .mobile-large-logo {
-        max-height: 55px !important;
+/* Desktop hover effects */
+@media (min-width: 768px) {
+    .sinlge-bar:hover .shopping-item {
+        opacity: 1 !important;
+        visibility: visible !important;
     }
 }
 
-/* Tablet adjustments */
-@media (min-width: 768px) and (max-width: 991px) {
-    .mobile-extra-large-icon {
-        font-size: 1.6rem !important;
+/* Mobile floating button animations */
+@media (max-width: 767px) {
+    .floating-cart a:active,
+    .floating-wishlist a:active {
+        transform: scale(0.95);
     }
 
-    .mobile-large-nav-link {
-        font-size: 1.2rem !important;
+    .floating-cart a:hover,
+    .floating-wishlist a:hover {
+        transform: scale(1.05);
+    }
+
+    /* Pulse animation for buttons with items */
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    .floating-cart a,
+    .floating-wishlist a {
+        animation: pulse 2s infinite;
     }
 }
 
-/* Desktop - keep original sizes */
-@media (min-width: 992px) {
-    /* All mobile classes will have no effect on desktop */
+/* Hide floating buttons on desktop */
+@media (min-width: 768px) {
+    .mobile-floating-buttons {
+        display: none !important;
+    }
 }
 </style>
+
+<script>
+// Add smooth scroll behavior and better mobile interactions
+document.addEventListener('DOMContentLoaded', function() {
+    // Add touch feedback for mobile buttons
+    const floatingButtons = document.querySelectorAll('.floating-cart a, .floating-wishlist a');
+
+    floatingButtons.forEach(button => {
+        button.addEventListener('touchstart', function() {
+            this.style.transform = 'scale(0.95)';
+        });
+
+        button.addEventListener('touchend', function() {
+            this.style.transform = 'scale(1)';
+        });
+    });
+
+    // Optional: Add vibration feedback on touch (if supported)
+    floatingButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            if ('vibrate' in navigator) {
+                navigator.vibrate(50); // Short vibration
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>
