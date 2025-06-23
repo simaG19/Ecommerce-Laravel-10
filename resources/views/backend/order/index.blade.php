@@ -23,10 +23,10 @@
     <table class="table table-bordered" id="order-dataTable" width="100%" cellspacing="0">
   <thead>
     <tr>
-      <th>S.N.</th>
+      {{-- <th>S.N.</th> --}}
       <th>Order No.</th>
       <th>Name</th>
-      <th>Email</th>
+      <th>Order Date</th>
       <th>Quantity</th>
       <th>Payment</th>
       <th>Screenshot</th>        <!-- fixed closing tag -->
@@ -37,10 +37,10 @@
   </thead>
   <tfoot>
     <tr>
-      <th>S.N.</th>
+      {{-- <th>S.N.</th> --}}
       <th>Order No.</th>
       <th>Name</th>
-      <th>Email</th>
+      <th>Order Date</th>
       <th>Quantity</th>
       <th>Payment</th>
       <th>Screenshot</th>     <!-- fixed closing tag -->
@@ -52,10 +52,10 @@
   <tbody>
     @foreach($orders as $order)
       <tr>
-        <td>{{ $order->id }}</td>
+        {{-- <td>{{ $order->id }}</td> --}}
         <td>{{ $order->order_number }}</td>
         <td>{{ $order->first_name }} {{ $order->last_name }}</td>
-        <td>{{ $order->email }}</td>
+        <td>{{ $order->created_at}}</td>
         <td>{{ $order->quantity }}</td>
         <td>
   <form
