@@ -32,15 +32,60 @@
         </a>
     </section>
 
-    <!-- Mobile-only adjustments -->
+    <!-- Fix for dark space -->
     <style>
+    /* Fix carousel height issues on all devices */
+    #Gslider {
+        height: auto !important;
+        min-height: auto !important;
+        margin-bottom: 0;
+    }
+
+    #Gslider .carousel-inner {
+        height: auto !important;
+        min-height: auto !important;
+    }
+
+    #Gslider .carousel-item {
+        height: auto !important;
+        min-height: auto !important;
+        display: block;
+    }
+
+    #Gslider .carousel-item img {
+        width: 100%;
+        height: auto;
+        display: block;
+        max-width: 100%;
+    }
+
     /* Mobile-only modifications - Desktop remains original */
     @media (max-width: 767px) {
+        /* Force carousel to fit content on mobile */
+        #Gslider {
+            height: auto !important;
+            min-height: auto !important;
+            max-height: none !important;
+        }
+
+        #Gslider .carousel-inner {
+            height: auto !important;
+            min-height: auto !important;
+            max-height: none !important;
+        }
+
+        #Gslider .carousel-item {
+            height: auto !important;
+            min-height: auto !important;
+            max-height: none !important;
+        }
+
         /* Make images responsive on mobile */
         #Gslider .carousel-item img {
             width: 100%;
-            height: auto;
+            height: auto !important;
             max-height: 250px;
+            min-height: auto !important;
             object-fit: cover;
         }
 
@@ -108,6 +153,8 @@
         /* Mobile indicators */
         #Gslider .carousel-indicators {
             bottom: 10px;
+            position: absolute;
+            margin-bottom: 0;
         }
 
         #Gslider .carousel-indicators li {
@@ -116,11 +163,15 @@
             border-radius: 50%;
             margin: 0 4px;
         }
+    }
 
-        /* Remove any extra spacing on mobile */
-        #Gslider {
-            margin-bottom: 0;
-        }
+    /* Override any existing carousel CSS that might be causing height issues */
+    .carousel-item::after {
+        display: none !important;
+    }
+
+    .carousel::after {
+        display: none !important;
     }
     </style>
 @endif
