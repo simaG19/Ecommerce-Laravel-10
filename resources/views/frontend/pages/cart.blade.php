@@ -50,7 +50,9 @@
 												<p class="product-des">{!!($cart['summary']) !!}</p>
 											</td>
 											<td class="price" data-title="Price"><span>{{number_format($cart['price'],2)}} ETB</span></td>
-											<td class="qty" data-title="Qty"><!-- Input Order -->
+
+
+                                            <td class="qty" data-title="Qty"><!-- Input Order -->
 												<div class="input-group">
 													<div class="button minus">
 														<button type="button" class="btn btn-primary btn-number" disabled="disabled" data-type="minus" data-field="quant[{{$key}}]">
