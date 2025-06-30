@@ -99,7 +99,7 @@
 </p>
 												{{-- Attribute dropdowns --}}
 						{{-- Attribute dropdowns - CORRECTED --}}
-@foreach($product_detail->attributes as $attr)
+{{-- @foreach($product_detail->attributes as $attr)
   <div class="form-group" style="margin-top:1rem;">
     <label for="attr-{{ $attr->id }}" style="font-weight:600;">
       {{ $attr->name }}
@@ -125,40 +125,65 @@
     </select>
   </div>
 @endforeach
-												<div class="product-buy">
-													<form action="{{route('single-add-to-cart')}}" method="POST">
-														@csrf
-														<div class="quantity">
-															<h6>Quantity :</h6>
-															<!-- Input Order -->
-															<div class="input-group">
-																<div class="button minus">
-																	<button type="button" class="btn btn-primary btn-number" disabled="disabled" data-type="minus" data-field="quant[1]">
-																		<i class="ti-minus"></i>
-																	</button>
-																</div>
-																<input type="hidden" name="slug" value="{{$product_detail->slug}}">
-																<input type="text" name="quant[1]" class="input-number"  data-min="1" data-max="1000" value="1" id="quantity">
-																<div class="button plus">
-																	<button type="button" class="btn btn-primary btn-number" data-type="plus" data-field="quant[1]">
-																		<i class="ti-plus"></i>
-																	</button>
-																</div>
-															</div>
-														<!--/ End Input Order -->
-														</div>
-														<div class="add-to-cart mt-4">
-															<button type="submit" class="btn">Add to cart</button>
-															<a href="{{route('add-to-wishlist',$product_detail->slug)}}" class="btn min"><i class="ti-heart"></i></a>
-														</div>
-													</form>
+												<div class="product-buy"> --}}
+    <form action="{{route('single-add-to-cart')}}" method="POST" id="add-to-cart-form">
+        @csrf
 
-													<p class="cat">Category :<a href="{{route('product-cat',$product_detail->cat_info['slug'])}}">{{$product_detail->cat_info['title']}}</a></p>
-													@if($product_detail->sub_cat_info)
-													<p class="cat mt-1">Sub Category :<a href="{{route('product-sub-cat',[$product_detail->cat_info['slug'],$product_detail->sub_cat_info['slug']])}}">{{$product_detail->sub_cat_info['title']}}</a></p>
-													@endif
-													<p class="availability">Stock : @if($product_detail->stock>0)<span class="badge badge-success">{{$product_detail->stock}}</span>@else <span class="badge badge-danger">{{$product_detail->stock}}</span>  @endif</p>
-												</div>
+        {{-- Move attribute dropdowns INSIDE the form --}}
+        @foreach($product_detail->attributes as $attr)
+          <div class="form-group" style="margin-top:1rem;">
+            <label for="attr-{{ $attr->id }}" style="font-weight:600;">
+              {{ $attr->name }}
+            </label>
+            <select
+              id="attr-{{ $attr->id }}"
+              name="attributes[{{ $attr->id }}]"
+              class="form-control attribute-select"
+              style="max-width:300px;"
+              data-attr-id="{{ $attr->id }}"
+            >
+              <option value="">-- Select {{ $attr->name }} --</option>
+              @foreach($attr->values as $val)
+                <option
+                  value="{{ $val->id }}"
+                  data-price="{{ number_format($val->price, 2, '.', '') }}"
+                >
+                  {{ $val->value }} @if($val->price > 0)(+{{ number_format($val->price,2) }} Birr)@endif
+                </option>
+              @endforeach
+            </select>
+          </div>
+        @endforeach
+
+        {{-- Product info --}}
+        <input type="hidden" name="slug" value="{{$product_detail->slug}}">
+        <input type="hidden" name="selected_price" id="selected-price-input" value="{{ $after_discount }}">
+
+        <div class="quantity">
+            <h6>Quantity :</h6>
+            <div class="input-group">
+                <div class="button minus">
+                    <button type="button" class="btn btn-primary btn-number" disabled="disabled" data-type="minus" data-field="quant[1]">
+                        <i class="ti-minus"></i>
+                    </button>
+                </div>
+
+                <input type="text" name="quant[1]" class="input-number" data-min="1" data-max="1000" value="1" id="quantity">
+
+                <div class="button plus">
+                    <button type="button" class="btn btn-primary btn-number" data-type="plus" data-field="quant[1]">
+                        <i class="ti-plus"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="add-to-cart mt-4">
+            <button type="submit" class="btn">Add to cart</button>
+            <a href="{{route('add-to-wishlist',$product_detail->slug)}}" class="btn min"><i class="ti-heart"></i></a>
+        </div>
+    </form>
+</div>
 												<!--/ End Product Buy -->
 											</div>
 										</div>
@@ -539,66 +564,122 @@
 	</style>
 @endpush
 @push('scripts')
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const priceInput = document.getElementById('selected-price-input');
+  const selects    = document.querySelectorAll('.attribute-select');
+
+  // Whenever ANY select changes, update the price field:
+  selects.forEach(sel => {
+    sel.addEventListener('change', updatePrice);
+  });
+
+  function updatePrice() {
+    // If you have multiple attributes, pick logic: here we take the
+    // last-changed select's price, or you could sum/add etc.
+    const sel = this;
+    const opt = sel.selectedOptions[0];
+    const price = opt && opt.dataset.price
+      ? parseFloat(opt.dataset.price)
+      : 0;
+
+    priceInput.value = price.toFixed(2);
+  }
+
+  // If you want to ensure on form submit we have a price even if no change:
+  document.getElementById('add-to-cart-form').addEventListener('submit', () => {
+    // if priceInput empty, default to discounted:
+    if (!priceInput.value) {
+      priceInput.value = "{{ number_format($after_discount,2,'.','') }}";
+    }
+  });
+});
+</script>
+
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 
 <script>
 // jQuery version - Use last selected attribute price
 $(document).ready(function() {
-    console.log('jQuery price updater initializing...');
-
     var originalBase = {{ $base }};
     var discountPercentage = {{ $discount }};
 
-    console.log('Original base:', originalBase, 'Discount:', discountPercentage);
-
     function updatePrices() {
-        console.log('Updating prices with jQuery...');
-
-        var newBasePrice = originalBase; // Start with original price
+        var newBasePrice = originalBase;
         var lastAttributePrice = 0;
         var hasSelectedAttribute = false;
 
         $('.attribute-select').each(function() {
             var selectedValue = $(this).val();
-            console.log('Select ID:', $(this).attr('id'), 'Value:', selectedValue);
+            var attrId = $(this).data('attr-id');
+
+            console.log('Processing attribute:', attrId, 'with value:', selectedValue); // Debug log
 
             if (selectedValue !== '') {
+                // Update hidden input
+                $('#attr-input-' + attrId).val(selectedValue);
+
                 var selectedOption = $(this).find('option:selected');
                 var attributePrice = parseFloat(selectedOption.data('price')) || 0;
 
                 if (attributePrice > 0) {
                     lastAttributePrice = attributePrice;
                     hasSelectedAttribute = true;
-                    console.log('Found attribute price:', attributePrice);
                 }
+            } else {
+                // Clear hidden input
+                $('#attr-input-' + attrId).val('');
             }
         });
 
         // Use the last found attribute price, or original if none
         if (hasSelectedAttribute) {
             newBasePrice = lastAttributePrice;
-            console.log('Using attribute price:', lastAttributePrice);
         } else {
             newBasePrice = originalBase;
-            console.log('No attribute selected, using original price:', originalBase);
         }
-
-        console.log('Final base price:', newBasePrice);
 
         // Calculate discounted price
         var newDiscounted = newBasePrice - (newBasePrice * discountPercentage / 100);
 
         // Update the price display
-        $('#discounted-price').text(newDiscounted.toFixed(2) + ' Birr');
+        $('#discounted-price').text(newDiscounted.toFixed(2));
         $('#original-price').text(newBasePrice.toFixed(2) + ' Birr');
 
-        console.log('Updated - Base:', newBasePrice, 'Discounted:', newDiscounted);
+        // Update the hidden price input
+        $('#selected-price-input').val(newDiscounted.toFixed(2));
     }
 
     // Attach change event
     $(document).on('change', '.attribute-select', function() {
-        console.log('Attribute changed:', $(this).attr('id'));
         updatePrices();
+    });
+
+    // Debug form submission
+    $('#add-to-cart-form').on('submit', function(e) {
+        console.log('Form being submitted...');
+
+        // Log all form data
+        var formData = new FormData(this);
+        for (var pair of formData.entries()) {
+            console.log(pair[0] + ': ' + pair[1]);
+        }
+
+        // Check if any attributes are selected
+        var hasAttributes = false;
+        $('.attribute-select').each(function() {
+            if ($(this).val() !== '') {
+                hasAttributes = true;
+                console.log('Attribute selected:', $(this).data('attr-id'), '=', $(this).val());
+            }
+        });
+
+        if (!hasAttributes) {
+            console.log('No attributes selected');
+        }
     });
 
     // Initial update
