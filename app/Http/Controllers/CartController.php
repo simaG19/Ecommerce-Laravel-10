@@ -14,36 +14,74 @@ class CartController extends Controller
     public function __construct(Product $product){
         $this->product=$product;
     }
-
 public function addToCart(Request $request)
 {
-    // 1) VALIDATE INPUT (including attributes[..][..])
+    // Debug: Log all incoming request data
+
+
+    \Log::info('=== ADD TO CART DEBUG ===');
+    \Log::info('All Request Data:', $request->all());
+
+    // 1) VALIDATE INPUT
     $data = $request->validate([
         'slug'                => 'required|string|exists:products,slug',
+        'quant'               => 'required|array',
+        'quant.*'             => 'integer|min:1',
         'attributes'          => 'nullable|array',
-        'attributes.*'        => 'array',
-        'attributes.*.*'      => 'integer|exists:attribute_values,id',
+        'attributes.*'        => 'nullable|integer', // Changed to nullable
+        'selected_price'      => 'required|numeric|min:0',
     ]);
 
-    $product = Product::where('slug', $data['slug'])->firstOrFail();
+    \Log::info('Validated Data:', $data);
 
-    // 2) BUILD THE CART-ROW QUERY
+    $product = Product::where('slug', $data['slug'])->firstOrFail();
+    $quantity = array_values($data['quant'])[0];
+
+    // 2) Process attributes - filter out empty values
+    $attributeOptions = [];
+    if (!empty($data['attributes'])) {
+        \Log::info('Processing attributes:', $data['attributes']);
+
+        foreach ($data['attributes'] as $attrId => $valueId) {
+            \Log::info("Attribute ID: {$attrId}, Value ID: {$valueId}");
+
+            if (!empty($valueId) && $valueId !== '') {
+                $attributeOptions[$attrId] = (int)$valueId;
+                \Log::info("Added to attributeOptions: {$attrId} => {$valueId}");
+            }
+        }
+    }
+
+    \Log::info('Final attributeOptions:', $attributeOptions);
+
+    // 3) Calculate price
+    $finalPrice = $this->calculateAttributePrice($product, $attributeOptions);
+    if ($finalPrice === null) {
+        $finalPrice = $data['selected_price'];
+    }
+
+    \Log::info('Final Price:', $finalPrice);
+
+    // 4) Prepare attribute options for storage
+    $attributeOptionsJson = !empty($attributeOptions) ? json_encode($attributeOptions) : null;
+    \Log::info('Attribute Options JSON:', $attributeOptionsJson);
+
+    // 5) Check for existing cart item
     $query = Cart::where('user_id', auth()->id())
                  ->whereNull('order_id')
                  ->where('product_id', $product->id);
 
-    if (! empty($data['attributes'])) {
-        // JSON‑encode to compare apples‑to‑apples
-        $query->where('attribute_options', json_encode($data['attributes']));
+    if ($attributeOptionsJson) {
+        $query->where('attribute_options', $attributeOptionsJson);
     } else {
         $query->whereNull('attribute_options');
     }
 
     $existing = $query->first();
 
-    // 3) UPDATE QUANTITY IF ALREADY IN CART
     if ($existing) {
-        $existing->quantity++;
+        \Log::info('Updating existing cart item:', $existing->id);
+        $existing->quantity += $quantity;
         $existing->amount = $existing->price * $existing->quantity;
 
         if ($existing->product->stock < $existing->quantity) {
@@ -51,76 +89,150 @@ public function addToCart(Request $request)
         }
 
         $existing->save();
-    }
-    // 4) CREATE NEW CART ROW WITH attribute_options
-    else {
-        $cart = new Cart();
-        $cart->user_id           = auth()->id();
-        $cart->product_id        = $product->id;
-        $cart->price             = ($product->price * (100 - $product->discount)) / 100;
-        $cart->quantity          = 1;
-        $cart->amount            = $cart->price;
-        $cart->attribute_options = $data['attributes'] ?? null;
+    } else {
+        \Log::info('Creating new cart item');
 
-        if ($cart->product->stock < 1) {
+        $cartData = [
+            'user_id'           => auth()->id(),
+            'product_id'        => $product->id,
+            'price'             => $finalPrice,
+            'quantity'          => $quantity,
+            'amount'            => $finalPrice * $quantity,
+            'attribute_options' => $attributeOptionsJson,
+        ];
+
+        \Log::info('Cart data to be saved:', $cartData);
+
+        $cart = Cart::create($cartData);
+
+        \Log::info('Cart created with ID:', $cart->id);
+        \Log::info('Cart attribute_options after save:', $cart->attribute_options);
+
+        // Double check what was actually saved
+        $savedCart = Cart::find($cart->id);
+        \Log::info('Verification - Cart from DB:', [
+            'id' => $savedCart->id,
+            'attribute_options' => $savedCart->attribute_options,
+            'attribute_options_type' => gettype($savedCart->attribute_options)
+        ]);
+
+        if ($cart->product->stock < $quantity) {
             return back()->with('error','Stock not sufficient!');
         }
-
-        $cart->save();
     }
 
     session()->flash('success','Product successfully added to cart');
     return back();
 }
 
+private function calculateAttributePrice($product, $selectedAttributes)
+{
+    \Log::info('Calculating price for attributes:', $selectedAttributes);
+
+    if (empty($selectedAttributes)) {
+        $price = ($product->price * (100 - ($product->discount ?? 0))) / 100;
+        \Log::info('No attributes, using base price:', $price);
+        return $price;
+    }
+
+    // Get the last selected attribute value
+    $lastAttributeValueId = end($selectedAttributes);
+    \Log::info('Using last attribute value ID:', $lastAttributeValueId);
+
+    $attributeValue = AttributeValue::find($lastAttributeValueId);
+    \Log::info('Found attribute value:', $attributeValue ? $attributeValue->toArray() : 'null');
+
+    if ($attributeValue && $attributeValue->price > 0) {
+        $price = ($attributeValue->price * (100 - ($product->discount ?? 0))) / 100;
+        \Log::info('Using attribute price:', $price);
+        return $price;
+    }
+
+    $price = ($product->price * (100 - ($product->discount ?? 0))) / 100;
+    \Log::info('Fallback to base price:', $price);
+    return $price;
+}
 
 
-    public function singleAddToCart(Request $request){
-        $request->validate([
-            'slug'      =>  'required',
-            'quant'      =>  'required',
-        ]);
-        // dd($request->quant[1]);
+public function singleAddToCart(Request $request){
+    $request->validate([
+        'slug'           => 'required',
+        'quant'          => 'required',
+        'selected_price' => 'required|numeric',
+        'attributes'     => 'nullable|array',
+        'attributes.*'   => 'nullable|string',
+    ]);
 
+    $product = Product::where('slug', $request->slug)->first();
 
-        $product = Product::where('slug', $request->slug)->first();
-        if($product->stock <$request->quant[1]){
-            return back()->with('error','Out of stock, You can add other products.');
-        }
-        if ( ($request->quant[1] < 1) || empty($product) ) {
-            request()->session()->flash('error','Invalid Products');
-            return back();
-        }
+    if($product->stock < $request->quant[1]){
+        return back()->with('error','Out of stock, You can add other products.');
+    }
 
-        $already_cart = Cart::where('user_id', auth()->user()->id)->where('order_id',null)->where('product_id', $product->id)->first();
-
-        // return $already_cart;
-
-        if($already_cart) {
-            $already_cart->quantity = $already_cart->quantity + $request->quant[1];
-            // $already_cart->price = ($product->price * $request->quant[1]) + $already_cart->price ;
-            $already_cart->amount = ($product->price * $request->quant[1])+ $already_cart->amount;
-
-            if ($already_cart->product->stock < $already_cart->quantity || $already_cart->product->stock <= 0) return back()->with('error','Stock not sufficient!.');
-
-            $already_cart->save();
-
-        }else{
-
-            $cart = new Cart;
-            $cart->user_id = auth()->user()->id;
-            $cart->product_id = $product->id;
-            $cart->price = ($product->price-($product->price*$product->discount)/100);
-            $cart->quantity = $request->quant[1];
-            $cart->amount=($product->price * $request->quant[1]);
-            if ($cart->product->stock < $cart->quantity || $cart->product->stock <= 0) return back()->with('error','Stock not sufficient!.');
-            // return $cart;
-            $cart->save();
-        }
-        request()->session()->flash('success','Product successfully added to cart.');
+    if (($request->quant[1] < 1) || empty($product)) {
+        request()->session()->flash('error','Invalid Products');
         return back();
     }
 
+    // Get the selected price from the form
+    $selectedPrice = floatval($request->selected_price);
+
+    // Safely get attributes and filter out empty values
+    $selectedAttributes = [];
+    if ($request->has('attributes') && is_array($request->attributes)) {
+        $selectedAttributes = array_filter($request->attributes, function($value) {
+            return !empty($value);
+        });
+    }
+
+    // Debug - you can remove this later
+    \Log::info('Cart Debug', [
+        'selected_price' => $selectedPrice,
+        'selected_attributes' => $selectedAttributes,
+        'product_default_price' => $product->price
+    ]);
+
+    // Build query to check for existing cart item with same attributes
+    $query = Cart::where('user_id', auth()->user()->id)
+                 ->where('order_id', null)
+                 ->where('product_id', $product->id);
+
+    if (!empty($selectedAttributes)) {
+        $query->where('attribute_options', json_encode($selectedAttributes));
+    } else {
+        $query->whereNull('attribute_options');
+    }
+
+    $already_cart = $query->first();
+
+    if($already_cart) {
+        $already_cart->quantity = $already_cart->quantity + $request->quant[1];
+        $already_cart->amount = ($selectedPrice * $request->quant[1]) + $already_cart->amount;
+
+        if ($already_cart->product->stock < $already_cart->quantity || $already_cart->product->stock <= 0) {
+            return back()->with('error','Stock not sufficient!');
+        }
+
+        $already_cart->save();
+    } else {
+        $cart = new Cart;
+        $cart->user_id = auth()->user()->id;
+        $cart->product_id = $product->id;
+        $cart->price = $selectedPrice; // This should now be the correct selected price
+        $cart->quantity = $request->quant[1];
+        $cart->amount = ($selectedPrice * $request->quant[1]);
+        $cart->attribute_options = !empty($selectedAttributes) ? json_encode($selectedAttributes) : null;
+
+        if ($cart->product->stock < $cart->quantity || $cart->product->stock <= 0) {
+            return back()->with('error','Stock not sufficient!');
+        }
+
+        $cart->save();
+    }
+
+    request()->session()->flash('success','Product successfully added to cart.');
+    return back();
+}
     public function cartDelete(Request $request){
         $cart = Cart::find($request->id);
         if ($cart) {
