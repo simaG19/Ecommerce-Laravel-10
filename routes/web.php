@@ -18,6 +18,7 @@
     use App\Http\Controllers\HomeController;
     use \UniSharp\LaravelFilemanager\Lfm;
     use App\Http\Controllers\Auth\ResetPasswordController;
+    use Illuminate\Support\Facades\Log;
     /*
     |--------------------------------------------------------------------------
     | Web Routes
@@ -142,8 +143,13 @@ Route::get('order/pdf/{id}', [OrderController::class, 'pdf'])
 
 
 
+// Route::group(['prefix' => 'user', 'middleware' => ['auth']], function() {
+//     Route::get('/orders', [App\Http\Controllers\Frontend\OrderController::class, 'index'])->name('user.order.index');
+//     Route::get('/order/{id}', [App\Http\Controllers\Frontend\OrderController::class, 'show'])->name('user.order.show');
 
-
+//     // If you need the delete route for users
+//     Route::delete('/order/{id}', [App\Http\Controllers\Frontend\OrderController::class, 'destroy'])->name('order.destroy');
+// });
 
 
 
@@ -185,6 +191,62 @@ Route::patch('admin/orders/{order}/update', [OrderController::class, 'updateStat
         // Message
         Route::resource('/message', 'MessageController');
         Route::get('/message/five', [MessageController::class, 'messageFive'])->name('messages.five');
+
+
+
+
+
+
+
+
+
+
+
+// In web.php
+Route::get('/test-cart-save', function() {
+    if (!auth()->check()) {
+        return 'Please login first';
+    }
+
+    try {
+        $product = \App\Models\Product::first();
+        if (!$product) {
+            return 'No products found';
+        }
+
+        $cart = new \App\Models\Cart();
+        $cart->user_id = auth()->id();
+        $cart->product_id = $product->id;
+        $cart->price = 100;
+        $cart->quantity = 1;
+        $cart->amount = 100;
+        $cart->attribute_options = '{"8":"14"}'; // Hardcoded test data
+
+        \Log::info('Before save:', $cart->toArray());
+
+        $result = $cart->save();
+
+        \Log::info('Save result:', $result);
+
+        $fresh = \App\Models\Cart::find($cart->id);
+        \Log::info('Fresh from DB:', $fresh->toArray());
+
+        return response()->json([
+            'success' => true,
+            'cart_id' => $cart->id,
+            'attribute_options' => $fresh->attribute_options
+        ]);
+
+    } catch (\Exception $e) {
+        \Log::error('Error:', $e->getMessage());
+        return response()->json(['error' => $e->getMessage()]);
+    }
+});
+
+
+
+
+
 
         // Order
         Route::resource('/order', 'OrderController');
