@@ -31,8 +31,7 @@
 								$settings=DB::table('settings')->get();
 							@endphp
 							<h3>Welcome To <span>Eshop</span></h3>
-							<p>@foreach($settings as $data) {{$data->description}} @endforeach</p>
-							<div class="button">
+							<p style="margin-right: 0px; margin-bottom: 0px; margin-left: 0px; overflow-wrap: break-word; font-family: Montserrat, serif; font-size: 18px; line-height: 1.8; color: rgba(0, 33, 53, 0.75); text-align: center;">Elli Electrical Equipment is a private company in Ethiopia established in 2012. We design, manufacture, install and distribute high quality electrical products to:</p><ul style="padding-inline-start: 16px; margin-top: 15px; color: rgba(0, 33, 53, 0.75); font-family: Montserrat, serif; font-size: 18px; text-align: center;"><li style="font-size: 1.125rem; letter-spacing: 0px; line-height: 1.8;">Home builders.</li><li style="font-size: 1.125rem; letter-spacing: 0px; line-height: 1.8;">Retailors.</li><li style="font-size: 1.125rem; letter-spacing: 0px; line-height: 1.8;">Contractors.</li><li style="font-size: 1.125rem; letter-spacing: 0px; line-height: 1.8;">Provide full installation</li><li></li></ul><span style="color: rgba(0, 33, 53, 0.75); font-family: Montserrat, serif; font-size: 18px; text-align: center;"></span><div class="button">
 								<a href="{{route('blog')}}" class="btn">Our Blog</a>
 								<a href="{{route('contact')}}" class="btn primary">Contact Us</a>
 							</div>

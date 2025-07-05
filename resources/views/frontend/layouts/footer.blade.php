@@ -14,7 +14,7 @@
 							@php
 								$settings=DB::table('settings')->get();
 							@endphp
-							<p class="text">@foreach($settings as $data) {{$data->short_des}} @endforeach</p>
+							<p class="text"><div class="contentgroup__heading " style="position: relative; overflow-wrap: break-word; color: rgb(255, 255, 255); fill: rgb(255, 255, 255); font-family: Montserrat, serif; font-size: 13px; text-align: center; "><h1 style="margin-right: 0px; margin-bottom: 0px; margin-left: 0px; overflow-wrap: break-word; font-family: BioRhyme, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0px; fill: rgb(255, 255, 255);">elli electrical switch, socket, circuit breaker, led light, wire and&nbsp;<b style="font-weight: bold;"></b>cable distributor&nbsp;</h1></div><p class="contentgroup__body " style="margin: 12px 0px 0px; overflow-wrap: break-word; font-family: Montserrat, serif; font-size: 13px; line-height: 1.8; position: relative; color: rgb(255, 255, 255); text-align: center; ">electrical wholesaler and supplier in addis ababa ethiopia&nbsp;</p></p>
 
 							<p class="call">Got Question? Call us 24/7<span><a href="tel:123456789"></a></span></p>
 						</div>
