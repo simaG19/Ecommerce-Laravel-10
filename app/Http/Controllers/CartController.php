@@ -11,13 +11,77 @@ use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
+    /**
+     * Add to cart from home page (simple GET request)
+     */
+    public function addToCart($slug)
+    {
+        $product = Product::where('slug', $slug)->firstOrFail();
+
+        // Check if user is authenticated
+        if (!Auth::check()) {
+            return redirect()->route('login.form')->with('error', 'Please login first');
+        }
+
+        // Check stock
+        if ($product->stock < 1) {
+            return back()->with('error', 'Out of stock, You can add other products.');
+        }
+
+        // Calculate price (with discount if any)
+        $price = $product->price;
+        if ($product->discount > 0) {
+            $price = $product->price - ($product->price * $product->discount / 100);
+        }
+
+        // Check for existing cart item (without attributes)
+        $existingCart = Cart::where('user_id', Auth::id())
+                           ->where('order_id', null)
+                           ->where('product_id', $product->id)
+                           ->where(function($q) {
+                               $q->whereNull('attribute_options')
+                                 ->orWhere('attribute_options', '')
+                                 ->orWhere('attribute_options', '{}')
+                                 ->orWhere('attribute_options', '[]');
+                           })
+                           ->first();
+
+        if ($existingCart) {
+            // Update existing cart item
+            $existingCart->quantity += 1;
+            $existingCart->amount = $existingCart->price * $existingCart->quantity;
+
+            // Check stock again
+            if ($existingCart->product->stock < $existingCart->quantity) {
+                return back()->with('error', 'Stock not sufficient!');
+            }
+
+            $existingCart->save();
+
+            return back()->with('success', 'Product quantity updated in cart.');
+        } else {
+            // Create new cart item
+            $cart = new Cart();
+            $cart->user_id = Auth::id();
+            $cart->product_id = $product->id;
+            $cart->price = $price;
+            $cart->quantity = 1;
+            $cart->amount = $price * 1;
+            $cart->attribute_options = null; // No attributes for simple add to cart
+
+            $cart->save();
+
+            return back()->with('success', 'Product successfully added to cart.');
+        }
+    }
+
     public function singleAddToCart(Request $request)
     {
         $request->validate([
             'slug'           => 'required|exists:products,slug',
             'quant'          => 'required|array',
             'quant.*'        => 'integer|min:1',
-            'selected_price' => 'required|numeric|min:0',
+            'selected_price' => 'nullable|numeric|min:0',
             'attributes'     => 'nullable|array',
             'attributes.*'   => 'nullable|integer',
         ]);
@@ -42,8 +106,15 @@ class CartController extends Controller
             }
         }
 
-        // Get the selected price from the form
-        $selectedPrice = floatval($request->selected_price);
+        // Calculate price
+        $selectedPrice = $request->selected_price;
+        if (!$selectedPrice) {
+            // Calculate default price with discount
+            $selectedPrice = $product->price;
+            if ($product->discount > 0) {
+                $selectedPrice = $product->price - ($product->price * $product->discount / 100);
+            }
+        }
 
         // Build query to check for existing cart item with same attributes
         $query = Cart::where('user_id', Auth::id())
@@ -104,80 +175,6 @@ class CartController extends Controller
 
             return back()->with('success', 'Product successfully added to cart.');
         }
-    }
-
-    public function addToCart(Request $request)
-    {
-        $data = $request->validate([
-            'slug'                => 'required|string|exists:products,slug',
-            'quant'               => 'required|array',
-            'quant.*'             => 'integer|min:1',
-            'attributes'          => 'nullable|array',
-            'attributes.*'        => 'nullable|integer',
-            'selected_price'      => 'required|numeric|min:0',
-        ]);
-
-        $product = Product::where('slug', $data['slug'])->firstOrFail();
-        $quantity = array_values($data['quant'])[0];
-
-        // Process attributes - filter out empty values
-        $attributeOptions = [];
-        if (!empty($data['attributes'])) {
-            foreach ($data['attributes'] as $attrId => $valueId) {
-                if (!empty($valueId) && $valueId !== '' && $valueId !== '0' && $valueId !== 0) {
-                    $attributeOptions[(string)$attrId] = (int)$valueId;
-                }
-            }
-        }
-
-        // Use the selected price from the form
-        $finalPrice = $data['selected_price'];
-
-        // Check for existing cart item
-        $query = Cart::where('user_id', Auth::id())
-                     ->whereNull('order_id')
-                     ->where('product_id', $product->id);
-
-        if (!empty($attributeOptions)) {
-            $query->whereRaw('attribute_options = ?', [json_encode($attributeOptions)]);
-        } else {
-            $query->where(function($q) {
-                $q->whereNull('attribute_options')
-                  ->orWhere('attribute_options', '')
-                  ->orWhere('attribute_options', '{}')
-                  ->orWhere('attribute_options', '[]');
-            });
-        }
-
-        $existing = $query->first();
-
-        if ($existing) {
-            $existing->quantity += $quantity;
-            $existing->amount = $existing->price * $existing->quantity;
-
-            if ($existing->product->stock < $existing->quantity) {
-                return back()->with('error', 'Stock not sufficient!');
-            }
-
-            $existing->save();
-        } else {
-            $cartData = [
-                'user_id'           => Auth::id(),
-                'product_id'        => $product->id,
-                'price'             => $finalPrice,
-                'quantity'          => $quantity,
-                'amount'            => $finalPrice * $quantity,
-                'attribute_options' => !empty($attributeOptions) ? $attributeOptions : null,
-            ];
-
-            $cart = Cart::create($cartData);
-
-            if ($cart->product->stock < $quantity) {
-                return back()->with('error', 'Stock not sufficient!');
-            }
-        }
-
-        return back()->with('success', 'Product successfully added to cart');
     }
 
     public function cartList()
