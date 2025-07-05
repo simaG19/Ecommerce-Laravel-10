@@ -54,4 +54,16 @@ protected $casts = [
         return $this->hasMany(ProductAttribute::class);
     }
 
+      /**
+     * Get all attribute values for this product
+     */
+    public function attributeValues()
+    {
+        return $this->hasManyThrough(AttributeValue::class, ProductAttribute::class, 'product_id', 'product_attribute_id');
+    }
+    //    public function attributes()
+    // {
+    //     return $this->hasMany(ProductAttribute::class);
+    // }
+
 }

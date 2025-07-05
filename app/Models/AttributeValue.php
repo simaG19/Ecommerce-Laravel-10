@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class AttributeValue extends Model
 {
-    // allow mass‑assignment on these columns:
     protected $fillable = [
         'product_attribute_id',
-        'value','price'
+        'value',
+        'price'
     ];
 
     /**
@@ -17,9 +17,14 @@ class AttributeValue extends Model
      */
     public function attribute()
     {
-        return $this->belongsTo(
-            ProductAttribute::class,
-            'product_attribute_id'
-        );
+        return $this->belongsTo(ProductAttribute::class, 'product_attribute_id');
+    }
+
+    /**
+     * Get the product attribute (alias for attribute relationship)
+     */
+    public function productAttribute()
+    {
+        return $this->belongsTo(ProductAttribute::class, 'product_attribute_id');
     }
 }
