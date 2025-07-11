@@ -148,7 +148,7 @@
                   value="{{ $val->id }}"
                   data-price="{{ number_format($val->price, 2, '.', '') }}"
                 >
-                  {{ $val->value }} @if($val->price > 0)(+{{ number_format($val->price,2) }} Birr)@endif
+                  {{ $val->value }} @if($val->price > 0)({{ number_format($val->price,2) }} Birr)@endif
                 </option>
               @endforeach
             </select>
